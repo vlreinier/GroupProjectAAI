@@ -45,12 +45,16 @@ function loadPersonalProducts() {
 }
 
 // functie voor het opvragen van specifieke producten
-function loadPopularProducts() {
+function loadProducts(filtering) {
 	var tableRef = document.getElementById('products');
 	while ( tableRef.rows.length > 1 ) {
 		tableRef.deleteRow(1);
 		}
-    fetch('/popularproducts')
+	values = allStorage()
+    fetch('/'+filtering, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(values) })
         .then(response => response.json())
         .then(products_json => showProductsInTable(products_json));
 	}

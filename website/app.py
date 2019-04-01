@@ -14,9 +14,10 @@ def home():
 def download_file(filename):
     return send_from_directory('static', filename, as_attachment=False)
 
-@app.route('/popularproducts')
+@app.route('/popularproducts', methods=['POST'])
 def popularproducts():
-    return jsonify(popular(sql_db,mongo_db))
+    sessiondata = request.json
+    return jsonify(popular(sql_db,mongo_db, sessiondata))
 
 @app.route('/personalproducts', methods=['POST'])
 def personalproducts():
