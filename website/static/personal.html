@@ -1,0 +1,32 @@
+<!doctype html>
+
+<html>
+
+<meta charset="UTF-8">
+<title>Persoonlijke aanbevelingen</title>
+<script src="javascript/webfunctions.js"></script>
+
+<body>
+	<button style='font-size:20px;' onclick="window.location.href = 'index.html';" >&larr;</button>
+    <h3>Persoonlijke aanbevelingen:</h3>
+
+    <form id="session">
+        <label style="float: left; width: 100px;">Bezoekersid:</label><input type="text" name="_id" /><br><br>
+        <button style="background-color: #4CAF50;color: white;font-size:15px;" type="button" onclick="loadPersonalProducts()">Bevestig</button><br>
+    </form>
+
+    <br>
+
+    <table id="products" style="text-align: left">
+        <tr>
+            <th width="25%">Naam</th>
+			<th width="5%">Prijs</th>
+            <th width="10%">Merk</th>
+			<th width="10%">Categorie</th>
+			<th width="5%">Voorraad</th>
+			<th width="5%">Opslaan</th>
+        </tr>
+    </table>
+</body>
+
+</html>

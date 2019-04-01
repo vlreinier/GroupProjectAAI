@@ -1,0 +1,28 @@
+<!doctype html>
+
+<html>
+<meta charset="UTF-8">
+<title>Index</title>
+<body onload="loadPopularProducts()">
+	<h1>Homepagina</h1>
+	<button style="height:50px;width:200px;background-color: #4CAF50;color: white;" onclick="window.location.href = 'collaborative_filtering.html';">Collaborative aanbeveling</button>
+	<button style="height:50px;width:200px;background-color: #4CAF50;color: white;" onclick="window.location.href = 'content_filtering.html';">Content aanbeveling</button>
+	<button style="height:50px;width:200px;background-color: #4CAF50;color: white;" onclick="window.location.href = 'personal.html';">Bezoekersid aanbeveling</button><br><br>
+	<br>
+	<button style='font-size:14px;' onclick="showlocalstorage()">Bekijk opgeslagen producten</button>
+	<button style='font-size:14px;' onclick="clearlocalstorage()">Leeg opgeslagen producten</button>
+	<button style='font-size:12px;font-style:bold;' onclick="loadPopularProducts()">Populaire producten verversen &#x21BA;</button>
+<script src="javascript/webfunctions.js"></script>
+	<p id="localstorage"></p>
+    <table id="products" style="text-align: left">
+        <tr>
+            <th width="25%">Naam</th>
+			<th width="5%">Prijs</th>
+            <th width="10%">Merk</th>
+			<th width="10%">Categorie</th>
+			<th width="5%">Voorraad</th>
+			<th width="5%">Opslaan</th>
+        </tr>
+    </table>
+</body>
+</html>
