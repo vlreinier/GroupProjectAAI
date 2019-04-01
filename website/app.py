@@ -39,3 +39,4 @@ if __name__ == '__main__':
     sql_db = connect_sql('voordeelshop_full', 'postgres', 'Welkom01!') # ophalen connectie SQL
     #lift(sql_db) # berekenen en invoeren lift 
     app.run() # starten applicatie
+
