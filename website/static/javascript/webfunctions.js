@@ -63,7 +63,6 @@ function showProductsInTable(products) {
             element("td", text(product['name'])),
 			element("td", text(product['price'])),
             element("td", text(product['brand'])),
-			element("td", text(product['category'])),
 			element("td", text(product['availability'])),
 			element("td", addtostorage_button(product['_id'], product['name']))
         )
@@ -118,7 +117,8 @@ function showstorage_button(id, value, filtering) {
 function addtostorage_button(id, name) {
 	var button = document.createElement('input');
 	button.setAttribute('type', 'button');
-	button.setAttribute('value', 'Sla op');
+	button.setAttribute('value', '🛒');
+	button.style.fontSize = '20px';
 	button.setAttribute('onClick', "addtolocalstorage("+JSON.stringify(id)+','+JSON.stringify(name)+");");
 	return button
 }
