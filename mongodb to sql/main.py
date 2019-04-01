@@ -5,7 +5,7 @@ from databases import connect_sql, mdb_connectie, drop_create_database
 
 def menu(sql_db,mongo_db):
 	## limit to insert files
-	limit = 100000
+	limit = 1000
 	
 	## sql tables
 	drop_tables(sql_db)
@@ -28,3 +28,5 @@ if __name__== "__main__":
 	mongo_db = mdb_connectie('voordeelshop')
 	## start menu
 	menu(sql_db,mongo_db)
+
+f
