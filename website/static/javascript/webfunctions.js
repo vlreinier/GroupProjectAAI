@@ -59,6 +59,7 @@ function loadPopularProducts() {
 function showProductsInTable(products) {
     for (product of products) {
         var row = element("tr",
+			element("td", image(product['image'])),
             element("td", text(product['name'])),
 			element("td", text(product['price'])),
             element("td", text(product['brand'])),
@@ -79,6 +80,7 @@ function showStorageInTable(products, filtering) {
         document.querySelector("#savedproducts").appendChild(row);
     }
 }
+
 // functie voor het aanmaken van tabelelementen
 function element(name, ...childs) {
     var element = document.createElement(name);
@@ -91,6 +93,13 @@ function element(name, ...childs) {
 // functie voor het aanmaken van een textelement voor tabel
 function text(value) {
     return document.createTextNode(value)
+}
+
+// functie voor het aanmaken van een textelement voor tabel
+function image(src) {
+    var img = new Image();
+	img.src = src;
+    return img;
 }
 
 // functie voor het aanmaken van een buttonelement voor tabel show local storage for content filtering

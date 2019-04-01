@@ -15,6 +15,7 @@ def get_product_details(mongo_db, id_list, shuffle):
 			if product_id not in seen:
 				dict = {}
 				seen.add(product_id)
+				dict['image'] = product['images'][0][0]
 				dict['name'] = product['name']
 				dict['price'] = '€' + str(product['price']['selling_price'])[:-2] + ',' + str(product['price']['selling_price'])[-2:]
 				dict['availability'] = product['properties']['availability']
