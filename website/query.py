@@ -12,19 +12,36 @@ def sort_big_to_small_on_index_one(id_list):
 	return final_list
 
 ## functie voor het ophalen populaire / meest verkochte producten, staat op homepagina
-def popular(sql_db,mongo_db, sessiondata):
-	wanted = []
-	personal = content_tree(sql_db, sessiondata)
-	query_results = search_sql(sql_db,"SELECT product_id, COUNT(*) AS populair FROM orders GROUP BY product_id ORDER BY populair DESC LIMIT 100")
-	for product_id in query_results:
-		wanted.append(product_id[0])
-	if len(personal) > 5:
-		personal = random.sample(personal,4)
-		wanted = random.sample(wanted, 6)
-	else:
-		wanted = random.sample(wanted, 10 - len(personal))
-	id_list = personal + wanted
-	return get_product_details(mongo_db, id_list, True)
+def popular(sql_connection, mongo_db, sessiondata):
+    total_cartproducts = len(sessiondata)
+    get_similar_products = 1
+    if total_cartproducts in range(1,3):
+        get_similar_products = 5
+    if total_cartproducts in range(3,5):
+        get_similar_products = 2
+
+    personal = []
+    for product_id in sessiondata:
+        product_details = search_sql(sql_connection,"SELECT category, sub_category, gender FROM products WHERE product_id = '{}'".format(product_id))[0]
+        category = product_details[0]
+        sub_category = product_details[1]
+        gender = product_details[2]
+        query_results = search_sql(sql_connection, "SELECT product_id FROM products WHERE category = '{}' AND sub_category = '{}' AND gender= '{}' ORDER BY RANDOM() LIMIT {}".format(category, sub_category, gender, get_similar_products))
+        for tuple in query_results:
+            personal.append(tuple[0])
+
+    popular = []
+    query_results = search_sql(sql_connection, "SELECT orders.product_id, COUNT(*) AS populair FROM sessions INNER JOIN orders ON sessions.session_id = orders.session_id WHERE sessions.session_start > '2018-10-23 11:57:54.914000' GROUP BY orders.product_id ORDER BY populair DESC LIMIT 200")
+
+    for tuple in query_results:
+        popular.append(tuple[0])
+
+    if len(personal) < 5:
+        popular = random.sample(popular, 10 - len(personal))
+    else:
+        popular = random.sample(popular, 5)
+    id_list = personal + popular
+    return get_product_details(mongo_db, id_list, True)
 
 ## functie voor het ophalen van persoonlijke aanbevelingen bezoekersid a.d.h.v. eerder bekeken en gelijke producten
 def personal(sql_db,mongo_db,sessiondata):
