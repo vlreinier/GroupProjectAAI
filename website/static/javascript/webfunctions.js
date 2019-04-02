@@ -66,7 +66,6 @@ function showProductsInTable(products) {
 			element("td", image(product['image'])),
             element("td", text(product['name'])),
 			element("td", text(product['price'])),
-            element("td", text(product['brand'])),
 			element("td", text(product['availability'])),
 			element("td", addtostorage_button(product['_id'], product['name']))
         )
@@ -102,6 +101,8 @@ function text(value) {
 function image(src) {
     var img = new Image();
 	img.src = src;
+	img.style.height = '120px';
+	img.style.width = '120px';
     return img;
 }
 

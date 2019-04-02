@@ -18,6 +18,9 @@ def get_product_details(mongo_db, id_list, shuffle):
 				dict['image'] = product['images'][0][0]
 				dict['name'] = product['name']
 				dict['price'] = '€' + str(product['price']['selling_price'])[:-2] + ',' + str(product['price']['selling_price'])[-2:]
+				if int(product['price']['selling_price']) < 100:
+					dict['price'] = '€'+'0' + str(product['price']['selling_price'])[:-2] + ',' + str(
+						product['price']['selling_price'])[-2:]
 				dict['availability'] = product['properties']['availability']
 				dict['brand'] = product['brand']
 				dict['category'] = product['category']

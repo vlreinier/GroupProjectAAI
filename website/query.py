@@ -58,7 +58,7 @@ def collaborative(sql_db,mongo_db,sessiondata):
     for product_id in sessiondata:
         query_results = search_sql(sql_db,"SELECT related, lift FROM lift_products WHERE product_id = '{}' ORDER BY lift DESC".format(product_id))
         for result in query_results:
-	        id_list.append(result[0])
+	        id_list.append(result)
     sorted_id_list = sort_big_to_small_on_index_one(id_list)
     return get_product_details(mongo_db, sorted_id_list, False)
 
