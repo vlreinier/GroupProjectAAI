@@ -1,8 +1,8 @@
 // functie voor het opvragen van specifieke producten
 function loadProductsShoppingcart() {
 	var tableRef = document.getElementById('savedproducts');
-	while ( tableRef.rows.length > 0 ) {
-		tableRef.deleteRow(0);
+	while ( tableRef.rows.length > 1 ) {
+		tableRef.deleteRow(1);
 		}
 	values = allStorage()
     fetch('/shoppingcart', {
@@ -32,7 +32,7 @@ function removefromstorage_button(id) {
 	button.setAttribute('type', 'button');
 	button.setAttribute('value', 'verwijder');
 	button.style.fontSize = '20px';
-	button.setAttribute('onClick', "removefromlocalstorage("+JSON.stringify(id)+");");
+	button.setAttribute('onClick',"removefromlocalstorage("+JSON.stringify(id)+");loadProductsShoppingcart();");
 	return button
 }
 
@@ -119,7 +119,7 @@ function addtostorage_button(id, name) {
 	button.setAttribute('type', 'button');
 	button.setAttribute('value', '🛒');
 	button.style.fontSize = '20px';
-	button.setAttribute('onClick', "addtolocalstorage("+JSON.stringify(id)+','+JSON.stringify(name)+");");
+	button.setAttribute('onClick', "addtolocalstorage("+JSON.stringify(id)+','+JSON.stringify(name)+");loadProductsShoppingcart();");
 	return button
 }
 

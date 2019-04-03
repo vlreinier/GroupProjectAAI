@@ -7,15 +7,15 @@
 <link rel="stylesheet" type="text/css" href="style.css">
 <script src="javascript/webfunctions.js"></script>
 
-<body onload="loadProductsShoppingcart()">
+<body onload="loadProductsShoppingcart(); loadProducts('collaborativefiltering');">
 	<button style='font-size:20px;' onclick="window.location.href = 'index.html';" >&larr;</button>
 	<h2 id='contenttext'>Winkelwagentje</h2>
-	<table id='savedproducts' style="text-align: left">
+	<table style="margin-left: 0px; border: 2px solid lightgrey" id='savedproducts'>
 		<tr>
-			<th width="40%"></th>
-            <th width="20%"></th>
-			<th width="10%"></th>
-            <th width="10%"></th>
+			<th width="8%"></th>
+            <th width="2%"></th>
+			<th width="3%"></th>
+            <th width="1%"></th>
 		</tr>
 	</table><br>
 
