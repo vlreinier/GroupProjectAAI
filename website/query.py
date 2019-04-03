@@ -46,7 +46,6 @@ def personal(sql_db,mongo_db,sessiondata):
     query_results1 = search_sql(sql_db,"SELECT orders.product_id FROM visitors INNER JOIN buids on visitors.visitor_id = buids.visitor_id INNER JOIN sessions on buids.buid = sessions.buid INNER JOIN orders on sessions.session_id = orders.session_id WHERE visitors.visitor_id = '{}'".format(sessiondata['visitor_id']))
     for product_id in query_results1:
         id_list.append(product_id[0])
-    id_list = content_tree(sql_db, id_list)
     return get_product_details(mongo_db, id_list, True)
 
 ## functie voor het ophalen van klantgedrag aanbevelingen a.d.h.v. opgeslagen producten
@@ -64,3 +63,14 @@ def shoppingcart(sql_db, mongo_db, sessiondata):
     for id in sessiondata:
         id_list.append(str(id))
     return get_product_details(mongo_db, id_list, False)
+
+def loadselected(sql_db, mongo_db, sessiondata):
+    id_list = []
+    for id in sessiondata:
+        id_list.append(str(sessiondata[id]))
+    return get_product_details(mongo_db, id_list, False)
+
+## functie voor het ophalen van soortgelijk product aanbevelingen a.d.h.v. opgeslagen producten
+def selectedsimilar(sql_db,mongo_db,sessiondata):
+	id_list = content_tree(sql_db, sessiondata)
+	return get_product_details(mongo_db, id_list, True)
