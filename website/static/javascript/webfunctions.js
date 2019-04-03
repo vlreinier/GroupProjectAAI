@@ -26,31 +26,16 @@ function showCartInTable(products) {
     }
 }
 
-// functie voor het aanmaken van een buttonelement voor tabel remove from localstorage
-function removefromstorage_button(id) {
-	var button = document.createElement('input');
-	button.setAttribute('type', 'button');
-	button.setAttribute('value', 'verwijder');
-	button.style.fontSize = '20px';
-	button.setAttribute('onClick',"removefromlocalstorage("+JSON.stringify(id)+");loadProductsShoppingcart();");
-	return button
-}
-
-// functie voor het verwijderen van een product uit localstorage
-function removefromlocalstorage(id) {
-	localStorage.removeItem(id);
-}
-
 // functie voor het opvragen van persoonlijke producten a.d.h.v. bezoekersid
 function loadPersonalProducts() {
 	var tableRef = document.getElementById('products');
 	while ( tableRef.rows.length > 1 ) {
 		tableRef.deleteRow(1);
 		}
+	var visitor_id = showVisitorId();
     sessionData = {
-        _id : document.forms['session']._id.value
+        visitor_id : visitor_id
     }
-
     fetch('/personalproducts', {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -120,6 +105,16 @@ function addtostorage_button(id, name) {
 	button.setAttribute('value', '🛒');
 	button.style.fontSize = '20px';
 	button.setAttribute('onClick', "addtolocalstorage("+JSON.stringify(id)+','+JSON.stringify(name)+");loadProductsShoppingcart();");
+	return button;
+}
+
+// functie voor het aanmaken van een buttonelement voor tabel remove from localstorage
+function removefromstorage_button(id) {
+	var button = document.createElement('input');
+	button.setAttribute('type', 'button');
+	button.setAttribute('value', 'verwijder');
+	button.style.fontSize = '20px';
+	button.setAttribute('onClick',"removefromlocalstorage("+JSON.stringify(id)+");loadProductsShoppingcart();");
 	return button
 }
 
@@ -137,13 +132,37 @@ function addtolocalstorage(id, name) {
 	localStorage.setItem(id, name);
 }
 
+// functie voor het verwijderen van een product uit localstorage
+function removefromlocalstorage(id) {
+	localStorage.removeItem(id);
+}
 
+// functie voor het toevoegen aan LocalStorage
+function saveVisitorId() {
+	var id = document.forms['visitorid']._id.value;
+	sessionStorage.clear();
+	sessionStorage.setItem('visitor_id', id);
+	showVisitorId();
+}
+
+function showVisitorId() {
+	for (var i = 0; i <= sessionStorage.length; i++) {
+		if (sessionStorage.key(i) === null) {
+			continue;
+		}
+		visitor_id = sessionStorage.getItem(sessionStorage.key(i));
+		document.getElementById("showvisitorid").innerHTML = visitor_id;
+		return visitor_id
+	}
+}
 // haalt alle waardes uit LocalStorage en slaat deze op in een dictionary
 function allStorage() {
 	var values = {};
-	for (var i=0; i <= localStorage.length; i++) {
-		if (localStorage.key(i) === null) { continue; }
+	for (var i = 0; i <= localStorage.length; i++) {
+		if (localStorage.key(i) === null) {
+			continue;
+		}
 		values[localStorage.key(i)] = localStorage.getItem(localStorage.key(i))
 	}
-    return values;
+	return values;
 }

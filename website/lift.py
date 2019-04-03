@@ -55,28 +55,7 @@ def lift_orders(sql_db):
 	sql_db.commit()
 	print('lift orders runtime:', (time.time() - starttime) / 60)
 
-## functie voor het berekenen van lift voor product x met y, uit viewed_before
-def lift_recommendations(sql_db):
-	total_visitors = total_transactions(sql_db, "SELECT count(distinct(visitor_id)) FROM viewed_before")
-	support_visitors = calculate_support(sql_db, total_visitors, "SELECT product_id, count(distinct(visitor_id)) FROM viewed_before GROUP BY product_id")
-	
-	for product_x,support_x in support_visitors.items():	
-		query_results = search_sql(sql_db,"select product_id, count(distinct(visitor_id)) as aantal from viewed_before where visitor_id in"
-									"(select distinct(visitor_id) from viewed_before where product_id = '{}') and product_id != '{}'"
-									"group by product_id ORDER BY aantal DESC LIMIT 10".format(product_x,product_x))
-		for result in results:
-			product_y = result[0]
-			xy_together = query_result[1]
-			support_y = support_visitors[product_y]
-			support_xy = xy_together / total_visitors
-			lift_xy = support_xy / (support_x * support_y)
-			if lift_xy > 20:
-				insert = [product_x,product_y,lift_xy]
-				commit_sql(sql_db,"INSERT INTO lift_products VALUES{}".format(tuple(insert)))
-	sql_db.commit()
-
 ## functie voor het beheren van gekozen lift berekeningen
 def lift(sql_db):
 	lift_table(sql_db)
 	lift_orders(sql_db)
-	#lift_recommendations(sql_db)

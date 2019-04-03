@@ -31,7 +31,6 @@ def popular(sql_connection, mongo_db, sessiondata):
             personal.append(tuple[0])
     popular = []
     query_results = search_sql(sql_connection, "SELECT product_id, COUNT(*) AS populair FROM orders GROUP BY product_id ORDER BY populair DESC LIMIT 200")
-
     for tuple in query_results:
         popular.append(tuple[0])
     if len(personal) < 5:
@@ -44,7 +43,7 @@ def popular(sql_connection, mongo_db, sessiondata):
 ## functie voor het ophalen van persoonlijke aanbevelingen bezoekersid a.d.h.v. eerder bekeken en gelijke producten
 def personal(sql_db,mongo_db,sessiondata):
     id_list = []
-    query_results1 = search_sql(sql_db,"SELECT orders.product_id FROM visitors INNER JOIN buids on visitors.visitor_id = buids.visitor_id INNER JOIN sessions on buids.buid = sessions.buid INNER JOIN orders on sessions.session_id = orders.session_id WHERE visitors.visitor_id = '{}'".format(sessiondata['_id']))
+    query_results1 = search_sql(sql_db,"SELECT orders.product_id FROM visitors INNER JOIN buids on visitors.visitor_id = buids.visitor_id INNER JOIN sessions on buids.buid = sessions.buid INNER JOIN orders on sessions.session_id = orders.session_id WHERE visitors.visitor_id = '{}'".format(sessiondata['visitor_id']))
     for product_id in query_results1:
         id_list.append(product_id[0])
     id_list = content_tree(sql_db, id_list)
@@ -65,8 +64,3 @@ def shoppingcart(sql_db, mongo_db, sessiondata):
     for id in sessiondata:
         id_list.append(str(id))
     return get_product_details(mongo_db, id_list, False)
-
-## functie voor het ophalen van soortgelijk product aanbevelingen a.d.h.v. opgeslagen producten
-def content(sql_db,mongo_db,sessiondata):
-	id_list = content_tree(sql_db, sessiondata)
-	return get_product_details(mongo_db, id_list, True)

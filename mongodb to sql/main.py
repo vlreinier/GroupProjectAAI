@@ -28,5 +28,3 @@ if __name__== "__main__":
 	mongo_db = mdb_connectie('voordeelshop')
 	## start menu
 	menu(sql_db,mongo_db)
-
-f

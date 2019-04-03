@@ -1,7 +1,7 @@
 from flask import Flask, send_from_directory, jsonify, redirect, request
 from pymongo import MongoClient
 from database_connections import mdb_connectie, connect_sql
-from query import popular,personal,collaborative,content, shoppingcart
+from query import popular,personal,collaborative,shoppingcart
 from lift import lift
 
 app = Flask(__name__)
@@ -41,7 +41,7 @@ def cart():
 
 if __name__ == '__main__':
     mongo_db = mdb_connectie("voordeelshop") # ophalen connectie MongoDB
-    sql_db = connect_sql('voordeelshop', 'postgres', 'Welkom01!') # ophalen connectie SQL
+    sql_db = connect_sql('voordeelshop_full', 'postgres', 'Welkom01!') # ophalen connectie SQL
     #lift(sql_db) # berekenen en invoeren lift
     app.run() # starten applicatie
 
