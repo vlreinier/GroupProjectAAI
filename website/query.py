@@ -29,13 +29,11 @@ def popular(sql_connection, mongo_db, sessiondata):
         query_results = search_sql(sql_connection, "SELECT product_id FROM products WHERE category = '{}' AND sub_category = '{}' AND gender= '{}' ORDER BY RANDOM() LIMIT {}".format(category, sub_category, gender, get_similar_products))
         for tuple in query_results:
             personal.append(tuple[0])
-
     popular = []
-    query_results = search_sql(sql_connection, "SELECT orders.product_id, COUNT(*) AS populair FROM sessions INNER JOIN orders ON sessions.session_id = orders.session_id WHERE sessions.session_start > '2018-10-23 11:57:54.914000' GROUP BY orders.product_id ORDER BY populair DESC LIMIT 200")
+    query_results = search_sql(sql_connection, "SELECT product_id, COUNT(*) AS populair FROM orders GROUP BY product_id ORDER BY populair DESC LIMIT 200")
 
     for tuple in query_results:
         popular.append(tuple[0])
-
     if len(personal) < 5:
         popular = random.sample(popular, 10 - len(personal))
     else:
@@ -61,6 +59,12 @@ def collaborative(sql_db,mongo_db,sessiondata):
 	        id_list.append(result)
     sorted_id_list = sort_big_to_small_on_index_one(id_list)
     return get_product_details(mongo_db, sorted_id_list, False)
+
+def shoppingcart(sql_db, mongo_db, sessiondata):
+    id_list = []
+    for id in sessiondata:
+        id_list.append(str(id))
+    return get_product_details(mongo_db, id_list, False)
 
 ## functie voor het ophalen van soortgelijk product aanbevelingen a.d.h.v. opgeslagen producten
 def content(sql_db,mongo_db,sessiondata):
