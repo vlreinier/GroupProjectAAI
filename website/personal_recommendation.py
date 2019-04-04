@@ -22,25 +22,6 @@ def check_if(visitor_id) :
     };
     return queries_controle
 
-def q_or(dbname, dbuser, dbpass,visitor_id):
-    conn = connect_sql(dbname, dbuser, dbpass)
-    cur = conn.cursor()
-    q = check_if(visitor_id)
-    cur.execute(q['or'])
-    o = cur.fetchall()
-    cur.close()
-    return o
-
-def q_vb(dbname, dbuser, dbpass,visitor_id):
-    conn = connect_sql(dbname, dbuser, dbpass)
-    cur = conn.cursor()
-    q = check_if(visitor_id)
-    cur.execute(q['vb'])
-    vb = cur.fetchall()
-    cur.close()
-    return vb
-
-
 def check_o_vb(visitor_id,dbname, dbuser, dbpass):
     'Controller of een klant heeft iets  gekocht'
     o=  q_or(dbname, dbuser, dbpass,visitor_id,)
@@ -77,32 +58,3 @@ def com_orders(result_query,visitor_id,dbname, dbuser, dbpass):
 #test
 visitor_id,dbname, dbuser, dbpass = '59dce8c1a56ac6edb4cf22e8', 'voordeelshop', 'postgres','amaryllis'
 print(check_o_vb(visitor_id,dbname, dbuser, dbpass ))
-
-#def ip_orders(m,c,g,result_query,visitor_id):
- #   'Bepaalt wie het meest voorkomt in de lijsten vna vergeleken producteninformatie'
-  #  m,c,g =com_orders(result_query,visitor_id)
-
-#----------------------------------------------------------------------------------------------------------------------------------
-#dict = {'test':'Select * from products Limit 5'}
-#dbname,dbuser,dbpass = 'voordeelshop2', 'postgres','amaryllis'
-#def test(dbname,dbuser,dbpass, dict):
- #   conn = connect_sql(dbname, dbuser, dbpass)
- #   cur = conn.cursor()
- #   dict = {'test': 'Select * from Visitors Limit 5'}
- #   cur.execute(dict['test'])
- #   fetched = cur.fetchall()
- #   print(fetched)
-        #print(i)
-
-#test(dbname,dbuser,dbpass, dict)
-
-
-#def check_if(dbname, dbuser, dbpassword, visitor_id):
-#    lst_id = []
-#    dt= dict_query(visitor_id)
-#    connect = psycopg2.connect("dbname={} user={} password={}".format(dbname, dbuser, dbpassword)) # connect to database
-#    cur = connect.cursor()
-#    if (dt.dict1['o']>=1)== True:
-#        print(dt.dict2['order'])
-
-# 1. query die de productinformkrijgen van de gekochte product.

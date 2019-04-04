@@ -1,5 +1,6 @@
 from sql_commit_query import search_sql,commit_sql
 import time
+import datetime
 
 ## functie voor het maken van een SQL tabel voor lift productcombinaties
 def lift_table(sql_db):
@@ -42,7 +43,7 @@ def lift_orders(sql_db):
 	for product_x, support_x in support_orders.items():	
 		query_results = search_sql(sql_db,"SELECT product_id, COUNT(DISTINCT(session_id)) AS aantal FROM orders WHERE session_id IN"
 									"(SELECT DISTINCT(session_id) FROM orders WHERE product_id = '{}') AND product_id != '{}'"
-									"GROUP BY product_id ORDER BY aantal DESC LIMIT 20".format(product_x,product_x))
+									"GROUP BY product_id ORDER BY aantal DESC LIMIT 10".format(product_x,product_x))
 		for result in query_results:
 			product_y = result[0]
 			xy_together = result[1]
@@ -57,5 +58,7 @@ def lift_orders(sql_db):
 
 ## functie voor het beheren van gekozen lift berekeningen
 def lift(sql_db):
+	print("Lift insertion is started at ", datetime.datetime.now())
 	lift_table(sql_db)
 	lift_orders(sql_db)
+	print("Lift insertion is ended at ", datetime.datetime.now())

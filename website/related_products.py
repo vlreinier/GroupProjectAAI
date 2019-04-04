@@ -4,7 +4,7 @@ from sql_commit_query import search_sql
 def content_tree(sql_db, sessiondata):
 	product_ids = []
 	for product_id in sessiondata:
-		query_results = search_sql(sql_db, "SELECT category, sub_category, sub_sub_category, selling_price, gender, brand FROM products WHERE product_id = '{}'".format(sessiondata[product_id]))[0]
+		query_results = search_sql(sql_db, "SELECT category, sub_category, sub_sub_category, selling_price, gender, brand FROM products WHERE product_id = '{}'".format(product_id))[0]
 		category = query_results[0]
 		sub_category = query_results[1]
 		sub_sub_category = query_results[2]
