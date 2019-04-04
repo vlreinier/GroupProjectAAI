@@ -34,8 +34,8 @@ def create_tables(sql_connection):
 	CREATE TABLE sessions (
 		session_id VARCHAR(255) PRIMARY KEY NOT NULL,
 		buid VARCHAR(255) NOT NULL,
-		session_start VARCHAR(255) NOT NULL,
-		session_end VARCHAR(255) NOT NULL );
+		session_start TIMESTAMP NOT NULL,
+		session_end TIMESTAMP NOT NULL );
 		
 	CREATE TABLE orders (
 		session_id VARCHAR(255) NOT NULL,

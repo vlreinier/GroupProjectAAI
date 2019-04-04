@@ -26,7 +26,7 @@ def get_product_details(mongo_db, id_list, shuffle):
 				dict['category'] = product['category']
 				dict['_id'] = str(product_id)
 				all_dict.append(dict)
-				if count == 6:
+				if count == 4:
 					return all_dict
 				count+=1
 				

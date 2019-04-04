@@ -92,7 +92,7 @@ def insert_sessions(sessions, sql_connection, inserts):
 				i['buid'][0] = i['buid'][0][0]
 			i['buid'] = i['buid'][0]
 		if (i['_id'] in sessions_orders) and (i['buid'] in buids):
-			inserts+="INSERT INTO sessions Values('{}','{}','{}','{}');\n".format(str(i['_id']), str(i['buid']),str(i['session_start']), str(i['session_end']))
+			inserts+="INSERT INTO sessions Values('{}','{}','{}','{}');\n".format(str(i['_id']), str(i['buid']),i['session_start'], i['session_end'])
 	return inserts
 	
 def insert_orders(orders, sql_connection, inserts):

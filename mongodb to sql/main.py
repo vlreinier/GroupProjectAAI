@@ -5,7 +5,7 @@ from databases import connect_sql, mdb_connectie, drop_create_database
 
 def menu(sql_db,mongo_db):
 	## limit to insert files
-	limit = 1000
+	limit = 100000
 	
 	## sql tables
 	drop_tables(sql_db)
