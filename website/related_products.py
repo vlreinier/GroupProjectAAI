@@ -59,6 +59,8 @@ def get_highest_occurence(id_list):
     return set(new_list)
 
 def personal_preffered_products(sql_connection, visitor_id):
+    if visitor_id['visitor_id'] == '':
+        return []
     ordered = search_sql(sql_connection,"""SELECT orders.product_id, products.category,products.sub_category, products.brand,
                                             products.gender FROM visitors
                                             INNER JOIN buids on visitors.visitor_id = buids.visitor_id 

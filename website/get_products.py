@@ -9,10 +9,11 @@ def get_product_details(mongo_db, id_list, shuffle):
 		random.shuffle(id_list)
 	
 	for product_id in id_list:
-		product = mongo_db.products.find_one({'_id':product_id})
+		product = mongo_db.products.find_one({'_id' : product_id})
 		
 		try:
 			if product_id not in seen:
+				count+=1
 				dict = {}
 				seen.add(product_id)
 				dict['image'] = product['images'][0][0]
@@ -28,9 +29,9 @@ def get_product_details(mongo_db, id_list, shuffle):
 				all_dict.append(dict)
 				if count == 6:
 					return all_dict
-				count+=1
 				
 		except Exception:
+			count-=1
 			continue
 		
 	return all_dict

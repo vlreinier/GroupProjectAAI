@@ -43,7 +43,7 @@ def collaborative(sql_db,mongo_db,sessiondata):
             query_results_cat = search_sql(sql_db, "SELECT product_id FROM products WHERE category='{}' AND selling_price BETWEEN {}*0.8 AND {}*1.2 ORDER BY RANDOM() LIMIT {}".format(product_cat[0][0], product_price, product_price, limit_cat))
             for result_cat in query_results_cat:
                 id_list.append(result_cat[0])
-    return get_product_details(mongo_db, id_list, False)
+    return get_product_details(mongo_db, id_list, True)
 
 def shoppingcart(sql_db, mongo_db, sessiondata):
     id_list = []
@@ -61,6 +61,6 @@ def loadselected(sql_db, mongo_db, sessiondata):
 def selectedsimilar(sql_db,mongo_db,sessiondata):
     id_list = []
     for i in sessiondata:
-        id_list.append(i)
-    id_list = content_tree(sql_db, sessiondata)
+        id_list.append(sessiondata[i])
+    id_list = content_tree(sql_db, id_list)
     return get_product_details(mongo_db, id_list, False)
