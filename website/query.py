@@ -24,10 +24,25 @@ def personal(sql_connection,mongo_db,visitor_id):
 ## functie voor het ophalen van klantgedrag aanbevelingen a.d.h.v. opgeslagen producten
 def collaborative(sql_db,mongo_db,sessiondata):
     id_list = []
+    if len(sessiondata) == 1:
+        limit = 6
+    elif len(sessiondata) == 2:
+        limit = 3
+    elif len(sessiondata) == 3 or 4:
+        limit = 2
+    else:
+        limit = 1
     for product_id in sessiondata:
-        query_results = search_sql(sql_db,"SELECT related, lift FROM lift_products WHERE product_id = '{}' ORDER BY lift DESC".format(product_id))
+        query_results = search_sql(sql_db,"SELECT related, lift FROM lift_products WHERE product_id ='{}' ORDER BY lift DESC limit {}".format(product_id, limit))
         for result in query_results:
-	        id_list.append(result[0])
+            id_list.append(result[0])
+        if len(query_results) != limit:
+            product_price = search_sql(sql_db, "SELECT selling_price FROM products WHERE product_id='{}'".format(product_id))
+            limit_cat = limit - len(query_results)
+            product_cat = search_sql(sql_db, "SELECT category FROM products WHERE product_id='{}'".format(product_id))
+            query_results_cat = search_sql(sql_db, "SELECT product_id FROM products WHERE category='{}' AND selling_price BETWEEN {}*0.8 AND {}*1.2 ORDER BY RANDOM() LIMIT {}".format(product_cat[0][0], product_price, product_price, limit_cat))
+            for result_cat in query_results_cat:
+                id_list.append(result_cat[0])
     return get_product_details(mongo_db, id_list, False)
 
 def shoppingcart(sql_db, mongo_db, sessiondata):

@@ -50,7 +50,7 @@ def lift_orders(sql_db):
 			support_y = support_orders[product_y]
 			support_xy = xy_together / total_orders
 			lift_xy = support_xy / (support_x * support_y)
-			if lift_xy > 1:
+			if lift_xy > 5 and support_x > 0.0001 and support_y > 0.0001:
 				insert = [product_x,product_y,lift_xy]
 				commit_sql(sql_db,"INSERT INTO lift_products VALUES{}".format(tuple(insert)))
 	sql_db.commit()
