@@ -30,6 +30,8 @@ def content_tree(sql_db, sessiondata):
 	return product_ids
 
 def get_highest_occurence(id_list):
+    if len(id_list) == 0:
+        return []
     new_list = []
     category = {}
     sub_category = {}
@@ -56,10 +58,10 @@ def get_highest_occurence(id_list):
     for i in gender:
         if gender[i] == most_gender:
             new_list.append(i)
-    return set(new_list)
+    return list(set(new_list))
 
 def personal_preffered_products(sql_connection, visitor_id):
-    if visitor_id['visitor_id'] == '':
+    if (visitor_id['visitor_id'] == '') or (visitor_id['visitor_id'] == None):
         return []
     ordered = search_sql(sql_connection,"""SELECT orders.product_id, products.category,products.sub_category, products.brand,
                                             products.gender FROM visitors
@@ -68,16 +70,16 @@ def personal_preffered_products(sql_connection, visitor_id):
                                             INNER JOIN orders on sessions.session_id = orders.session_id 
                                             INNER JOIN products on orders.product_id = products.product_id 
                                             WHERE visitors.visitor_id = '{}'""".format(visitor_id['visitor_id']))
-    id_list = list(get_highest_occurence(ordered))
+    id_list = get_highest_occurence(ordered)
 
-    if len(id_list) == 0:
+    if len(id_list) < 2:
         viewed = search_sql(sql_connection, """SELECT distinct(viewed_before.product_id), products.category,products.sub_category,
                                             products.brand,products.gender FROM visitors   
                                             INNER JOIN viewed_before on visitors.visitor_id = viewed_before.visitor_id
                                             INNER JOIN products on viewed_before.product_id = products.product_id 
                                             INNER JOIN buids on visitors.visitor_id = buids.visitor_id 
                                             WHERE visitors.visitor_id = '{}'""".format(visitor_id['visitor_id']))
-        id_list = list(get_highest_occurence(viewed))
+        id_list = get_highest_occurence(viewed)
     id_list = content_tree(sql_connection, id_list)
     return id_list
 
