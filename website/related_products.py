@@ -1,4 +1,5 @@
 from sql_commit_query import search_sql
+from statistics import mode
 
 ## functie voor het ophalen van soortgelijke producten
 def content_tree(sql_db, sessiondata):
@@ -27,3 +28,72 @@ def content_tree(sql_db, sessiondata):
 					if result[0] != product_id:
 						product_ids.append(result[0])
 	return product_ids
+
+def get_highest_occurence(id_list):
+    new_list = []
+    category = {}
+    sub_category = {}
+    brand = {}
+    gender = {}
+    for i in id_list:
+        category[i[0]] = i[1]
+        sub_category[i[0]] = i[2]
+        brand[i[0]] = i[3]
+        gender[i[0]] = i[4]
+    most_category = mode(category.values())
+    most_sub_category = mode(sub_category.values())
+    most_brand = mode(brand.values())
+    most_gender = mode(gender.values())
+    for i in category:
+        if category[i] == most_category:
+            new_list.append(i)
+    for i in sub_category:
+        if sub_category[i] == most_sub_category:
+            new_list.append(i)
+    for i in brand:
+        if brand[i] == most_brand:
+            new_list.append(i)
+    for i in gender:
+        if gender[i] == most_gender:
+            new_list.append(i)
+    return set(new_list)
+
+def personal_preffered_products(sql_connection, visitor_id):
+    ordered = search_sql(sql_connection,"""SELECT orders.product_id, products.category,products.sub_category, products.brand,
+                                            products.gender FROM visitors
+                                            INNER JOIN buids on visitors.visitor_id = buids.visitor_id 
+                                            INNER JOIN sessions on buids.buid = sessions.buid 
+                                            INNER JOIN orders on sessions.session_id = orders.session_id 
+                                            INNER JOIN products on orders.product_id = products.product_id 
+                                            WHERE visitors.visitor_id = '{}'""".format(visitor_id['visitor_id']))
+    id_list = list(get_highest_occurence(ordered))
+
+    if len(id_list) == 0:
+        viewed = search_sql(sql_connection, """SELECT distinct(viewed_before.product_id), products.category,products.sub_category,
+                                            products.brand,products.gender FROM visitors   
+                                            INNER JOIN viewed_before on visitors.visitor_id = viewed_before.visitor_id
+                                            INNER JOIN products on viewed_before.product_id = products.product_id 
+                                            INNER JOIN buids on visitors.visitor_id = buids.visitor_id 
+                                            WHERE visitors.visitor_id = '{}'""".format(visitor_id['visitor_id']))
+        id_list = list(get_highest_occurence(viewed))
+    id_list = content_tree(sql_connection, id_list)
+    return id_list
+
+def get_popular_products(sql_connection, visitor_id):
+    popular_all = []
+    popular_orders_last_2months = search_sql(sql_connection, """SELECT orders.product_id, COUNT(*) AS populair FROM sessions
+                                                                INNER JOIN orders ON sessions.session_id = orders.session_id
+                                                                WHERE sessions.session_start > CURRENT_DATE - INTERVAL '12 months'
+                                                                GROUP BY orders.product_id ORDER BY populair DESC LIMIT 150""")
+    popular_viewed_last_month = search_sql(sql_connection, """SELECT viewed_before.product_id FROM viewed_before
+                                                              INNER JOIN visitors ON viewed_before.visitor_id = visitors.visitor_id
+                                                              INNER JOIN buids ON visitors.visitor_id = buids.visitor_id
+                                                              INNER JOIN sessions ON buids.buid = sessions.buid
+                                                              WHERE sessions.session_start > CURRENT_DATE - INTERVAL '12 months'
+                                                              GROUP BY viewed_before.product_id
+                                                              ORDER BY COUNT(viewed_before.product_id) DESC LIMIT 10""")
+    for tuple in popular_orders_last_2months:
+        popular_all.append(tuple[0])
+    for tuple in popular_viewed_last_month:
+        popular_all.append(tuple[0])
+    return popular_all
