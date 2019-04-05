@@ -1,26 +1,11 @@
 from generate_product_details import get_product_details
-from algorithms import content_tree, get_popular_products, personal_preffered_products, alternatives
-import random
+from algorithms import content_tree, get_homepage_products, personal_preffered_products, alternatives
 
 
 # functie voor het ophalen populaire icm persoonlijke producten, staat op homepagina
 def homepage(sql_connection, mongo_db, visitor_id):
-    personal_all = personal_preffered_products(sql_connection, visitor_id)
-    popular_all = get_popular_products(sql_connection, visitor_id)
-    get_personal = len(personal_all)
-    get_popular = len(popular_all)
-
-    if get_personal < 3 and get_popular >= get_popular + (3 - get_personal):
-        get_popular = get_popular + (3 - get_personal)
-    if get_popular < 3 and get_personal >= get_personal + (3 - get_popular):
-        get_personal = get_personal + (3 - get_popular)
-    if get_popular > 2 and get_personal > 2:
-        get_popular = 3
-        get_personal = 3
-
-    personal = random.sample(personal_all, get_personal)
-    popular = random.sample(popular_all, get_popular)
-    return get_product_details(mongo_db, personal + popular, True)
+    id_list = get_homepage_products(sql_connection, visitor_id)
+    return get_product_details(mongo_db, id_list, True)
 
 
 # functie voor het ophalen van persoonlijke aanbevelingen bezoekersid a.d.h.v. eerder bekeken en gelijke producten

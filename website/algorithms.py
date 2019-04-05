@@ -1,6 +1,8 @@
 from sql_commit_query import search_sql
 from statistics import mode
 from collections import Counter
+import random
+
 
 # haalt alternatieve producten op voor winkelwagentje a.d.h.v. lift en / of producteigenschappen
 def alternatives(sql_db, sessiondata):
@@ -134,7 +136,7 @@ def personal_preffered_products(sql_connection, visitor_id):
 
 
 # berekening populaire producten
-def get_popular_products(sql_connection, visitor_id):
+def get_homepage_products(sql_connection, visitor_id):
     popular_all = []
     popular_orders_last_2months = search_sql(sql_connection, """SELECT orders.product_id, COUNT(*) AS populair FROM sessions
                                                                 INNER JOIN orders ON sessions.session_id = orders.session_id
@@ -151,4 +153,19 @@ def get_popular_products(sql_connection, visitor_id):
         popular_all.append(tuple[0])
     for tuple in popular_viewed_last_month:
         popular_all.append(tuple[0])
-    return popular_all
+
+    personal_all = personal_preffered_products(sql_connection, visitor_id)
+    get_personal = len(personal_all)
+    get_popular = len(popular_all)
+
+    if get_personal < 3 and get_popular >= get_popular + (3 - get_personal):
+        get_popular = get_popular + (3 - get_personal)
+    if get_popular < 3 and get_personal >= get_personal + (3 - get_popular):
+        get_personal = get_personal + (3 - get_popular)
+    if get_popular > 2 and get_personal > 2:
+        get_popular = 3
+        get_personal = 3
+
+    personal = random.sample(personal_all, get_personal)
+    popular = random.sample(popular_all, get_popular)
+    return personal + popular
