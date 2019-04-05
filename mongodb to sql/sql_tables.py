@@ -1,8 +1,9 @@
 from sql_functions import commit_sql
 
+
 def drop_tables(sql_connection):
-	query = (
-	"""
+    query = (
+        """
 	DROP TABLE IF EXISTS products CASCADE;
 	DROP TABLE IF EXISTS sessions CASCADE;
 	DROP TABLE IF EXISTS visitors CASCADE;
@@ -10,12 +11,13 @@ def drop_tables(sql_connection):
 	DROP TABLE IF EXISTS viewed_before CASCADE;
 	DROP TABLE IF EXISTS recommendations CASCADE;
 	DROP TABLE IF EXISTS buids CASCADE;
-	""" )
-	return commit_sql(sql_connection, query)
+	""")
+    return commit_sql(sql_connection, query)
+
 
 def create_tables(sql_connection):
-	query = (
-	"""
+    query = (
+        """
 	CREATE TABLE products (
 		product_id VARCHAR(255) PRIMARY KEY NOT NULL,
 		name VARCHAR(255) NOT NULL,
@@ -52,12 +54,13 @@ def create_tables(sql_connection):
 	CREATE TABLE buids(
 		visitor_id VARCHAR(255) NOT NULL,
 		buid VARCHAR(255) PRIMARY KEY NOT NULL);
-	""" )
-	return commit_sql(sql_connection, query)
+	""")
+    return commit_sql(sql_connection, query)
+
 
 def alter_tables(sql_connection):
-	query = (
-	"""
+    query = (
+        """
 	AlTER TABLE sessions
 		ADD FOREIGN KEY (buid) REFERENCES buids(buid);
 	AlTER TABLE orders	
@@ -71,4 +74,4 @@ def alter_tables(sql_connection):
 		ADD FOREIGN KEY (visitor_id) REFERENCES visitors(visitor_id),
 		ADD FOREIGN KEY (product_id) REFERENCES products(product_id);
 	""")
-	return commit_sql(sql_connection, query)
+    return commit_sql(sql_connection, query)
