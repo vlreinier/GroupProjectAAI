@@ -75,37 +75,32 @@ def content_tree(sql_db, sessiondata):
 
 # berekenen meest voorkomende producteigenschappen
 def get_highest_occurence(ordered):
-    new_list = product_ids = favourites = []
-    category, sub_category, brand, gender = {}, {}, {}, {}
+    new_list, product_ids, favourites, most_wanted = [], [], [], []
+    sub_category, sub_sub_category, brand, gender = [], [], [], []
 
     if len(ordered) == 0:
-        return new_list
-
+        return new_list, favourites
     for i in ordered:
         product_ids.append(i[0])
-        category[i[0]] = i[1]
-        sub_category[i[0]] = i[2]
-        brand[i[0]] = i[3]
-        gender[i[0]] = i[4]
-    most_category = mode(category.values())
-    most_sub_category = mode(sub_category.values())
-    most_brand = mode(brand.values())
-    most_gender = mode(gender.values())
+        sub_category.append(i[1])
+        sub_sub_category.append(i[2])
+        brand.append(i[3])
+        gender.append(i[4])
+    counted_properties = Counter(sub_category) + Counter(sub_sub_category) + Counter(brand) + Counter(gender)
+    counted_products = Counter(product_ids)
 
-    counted_ids = Counter(product_ids)
-    for i in counted_ids:
-        if counted_ids[i] > 2:
+    for i in counted_products:
+        if counted_products[i] > 3:
             favourites.append(i)
 
+    for i in counted_properties:
+        if counted_properties[i] > 3:
+            most_wanted.append(i)
+
     for i in ordered:
-        if i[1] == most_category:
-            new_list.append(i[0])
-        if i[2] == most_sub_category:
-            new_list.append(i[0])
-        if i[3] == most_brand:
-            new_list.append(i[0])
-        if i[4] == most_gender:
-            new_list.append(i[0])
+        for y in i:
+            if y in most_wanted:
+                new_list.append(i[0])
 
     return list(set(new_list)), favourites
 
@@ -114,18 +109,17 @@ def get_highest_occurence(ordered):
 def personal_preffered_products(sql_connection, visitor_id):
     if (visitor_id['visitor_id'] == '') or (visitor_id['visitor_id'] == None):
         return []
-    ordered = search_sql(sql_connection, """SELECT orders.product_id, products.category,products.sub_category, products.brand,
-                                            products.gender FROM visitors
+    ordered = search_sql(sql_connection, """SELECT orders.product_id, products.sub_category, 
+                                            products.sub_sub_category, products.brand, products.gender FROM visitors
                                             INNER JOIN buids on visitors.visitor_id = buids.visitor_id 
                                             INNER JOIN sessions on buids.buid = sessions.buid 
                                             INNER JOIN orders on sessions.session_id = orders.session_id 
                                             INNER JOIN products on orders.product_id = products.product_id 
                                             WHERE visitors.visitor_id = '{}'""".format(visitor_id['visitor_id']))
     id_list, favourites = get_highest_occurence(ordered)
-
     if len(id_list) < 2:
-        viewed = search_sql(sql_connection, """SELECT distinct(viewed_before.product_id), products.category,products.sub_category,
-                                            products.brand,products.gender FROM visitors   
+        viewed = search_sql(sql_connection, """SELECT distinct(viewed_before.product_id), products.sub_category,
+                                            products.sub_sub_category, products.brand,products.gender FROM visitors   
                                             INNER JOIN viewed_before on visitors.visitor_id = viewed_before.visitor_id
                                             INNER JOIN products on viewed_before.product_id = products.product_id 
                                             INNER JOIN buids on visitors.visitor_id = buids.visitor_id 
@@ -138,34 +132,29 @@ def personal_preffered_products(sql_connection, visitor_id):
 # berekening populaire producten
 def get_homepage_products(sql_connection, visitor_id):
     popular_all = []
-    popular_orders_last_2months = search_sql(sql_connection, """SELECT orders.product_id, COUNT(*) AS populair FROM sessions
+    popular_orders_last_3months = search_sql(sql_connection, """SELECT orders.product_id FROM sessions
                                                                 INNER JOIN orders ON sessions.session_id = orders.session_id
-                                                                WHERE sessions.session_start > CURRENT_DATE - INTERVAL '12 months'
-                                                                GROUP BY orders.product_id ORDER BY populair DESC LIMIT 150""")
-    popular_viewed_last_month = search_sql(sql_connection, """SELECT viewed_before.product_id FROM viewed_before
-                                                              INNER JOIN visitors ON viewed_before.visitor_id = visitors.visitor_id
-                                                              INNER JOIN buids ON visitors.visitor_id = buids.visitor_id
-                                                              INNER JOIN sessions ON buids.buid = sessions.buid
-                                                              WHERE sessions.session_start > CURRENT_DATE - INTERVAL '12 months'
-                                                              GROUP BY viewed_before.product_id
-                                                              ORDER BY COUNT(viewed_before.product_id) DESC LIMIT 10""")
-    for tuple in popular_orders_last_2months:
+                                                                WHERE sessions.session_start > CURRENT_DATE - INTERVAL '3 months'
+                                                                GROUP BY orders.product_id ORDER BY COUNT(*) DESC LIMIT 40""")
+    for tuple in popular_orders_last_3months:
         popular_all.append(tuple[0])
-    for tuple in popular_viewed_last_month:
-        popular_all.append(tuple[0])
+
+    if len(popular_orders_last_3months) < 15:
+        popular_viewed_last_3months = search_sql(sql_connection, """SELECT viewed_before.product_id FROM viewed_before
+                                                                  INNER JOIN visitors ON viewed_before.visitor_id = visitors.visitor_id
+                                                                  INNER JOIN buids ON visitors.visitor_id = buids.visitor_id
+                                                                  INNER JOIN sessions ON buids.buid = sessions.buid
+                                                                  WHERE sessions.session_start > CURRENT_DATE - INTERVAL '3 months'
+                                                                  GROUP BY viewed_before.product_id
+                                                                  ORDER BY COUNT(viewed_before.product_id) DESC LIMIT 40""")
+        for tuple in popular_viewed_last_3months:
+            popular_all.append(tuple[0])
 
     personal_all = personal_preffered_products(sql_connection, visitor_id)
-    get_personal = len(personal_all)
-    get_popular = len(popular_all)
-
-    if get_personal < 3 and get_popular >= get_popular + (3 - get_personal):
-        get_popular = get_popular + (3 - get_personal)
-    if get_popular < 3 and get_personal >= get_personal + (3 - get_popular):
-        get_personal = get_personal + (3 - get_popular)
-    if get_popular > 2 and get_personal > 2:
-        get_popular = 3
-        get_personal = 3
-
-    personal = random.sample(personal_all, get_personal)
-    popular = random.sample(popular_all, get_popular)
+    if len(personal_all) < 3:
+        personal = random.sample(personal_all, len(personal_all))
+        popular = random.sample(popular_all, 3 + (3 - len(personal_all)))
+    else:
+        personal = random.sample(personal_all, 3)
+        popular = random.sample(popular_all, 3)
     return personal + popular

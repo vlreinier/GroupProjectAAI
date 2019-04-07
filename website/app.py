@@ -25,7 +25,7 @@ def popularproducts():
 @app.route('/personalproducts', methods=['POST'])
 def personalproducts():
     sessiondata = request.json
-    return jsonify(homepage(sql_db, mongo_db, sessiondata))
+    return jsonify(personal(sql_db, mongo_db, sessiondata))
 
 
 @app.route('/collaborativefiltering', methods=['POST'])

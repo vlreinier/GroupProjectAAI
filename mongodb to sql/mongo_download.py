@@ -14,6 +14,11 @@ def insert_files(mongodb_connection, mongodbcollection, sql_connection, table_fu
     print(table_functionname, 'is started!')
     files = []
     count = inserted = 0
+    progressbar_status = 0  # for progress bar
+    progressbar_length = 40  # for progress bar
+    sys.stdout.write("[%s]" % (" " * progressbar_length))  # for progress bar
+    sys.stdout.flush()  # for progress bar
+    sys.stdout.write("\b" * (progressbar_length + 1))  # for progress bar
 
     for file in my_col.find().limit(limit):
         files.append(file)
@@ -29,5 +34,10 @@ def insert_files(mongodb_connection, mongodbcollection, sql_connection, table_fu
             inserts = function_to_call(files, sql_connection, '')
             if inserts != '':
                 commit_sql(sql_connection, inserts)
+        if count - progressbar_status == collection_count // progressbar_length:  # for progress bar
+            sys.stdout.write("=")  # for progress bar
+            sys.stdout.flush()  # for progress bar
+            progressbar_status = count  # for progress bar
 
+    sys.stdout.write("\n")  # for progress bar
     print(table_functionname, 'is finished, runtime in seconds:  ', round((time.time() - start), 3), '\n')
