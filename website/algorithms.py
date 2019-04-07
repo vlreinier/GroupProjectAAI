@@ -90,12 +90,14 @@ def get_highest_occurence(ordered):
     counted_products = Counter(product_ids)
 
     for i in counted_products:
-        if counted_products[i] > 3:
+        if counted_products[i] > 2:
             favourites.append(i)
 
     for i in counted_properties:
-        if counted_properties[i] > 3:
+        if counted_properties[i] > 2:
             most_wanted.append(i)
+    if len(most_wanted) == 0:
+        most_wanted = product_ids
 
     for i in ordered:
         for y in i:

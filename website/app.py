@@ -61,5 +61,5 @@ def getsimilar():
 if __name__ == '__main__':
     mongo_db = mdb_connectie("voordeelshop")  # ophalen connectie MongoDB
     sql_db = connect_sql('voordeelshop', 'postgres', 'Welkom01!')  # ophalen connectie SQL
-    # lift(sql_db) # berekenen en invoeren lift
+    #lift(sql_db) # berekenen en invoeren lift
     app.run()  # starten applicatie
