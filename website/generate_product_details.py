@@ -2,7 +2,7 @@ import random
 
 
 # functie voor ophalen product eigenschappen a.d.h.v. product id's en opslaan in dictionary's in 1 lijst
-def get_product_details(mongo_db, id_list, shuffle):
+def get_product_details(mongo_db, id_list, shuffle, maximum):
     all_dict = []
     count = 0
     seen = set()
@@ -31,7 +31,7 @@ def get_product_details(mongo_db, id_list, shuffle):
                 dict['category'] = product['category']
                 dict['_id'] = str(product_id)
                 all_dict.append(dict)
-                if count == 6:
+                if maximum != 0 and count == maximum:
                     return all_dict
 
         except Exception:

@@ -20,7 +20,8 @@ def alternatives(sql_db, sessiondata):
                                    "SELECT related, lift FROM lift_products WHERE product_id ='{}' ORDER BY lift DESC limit {}".format(
                                        product_id, limit))
         for result in query_results:
-            id_list.append(result[0])
+            if result[0] not in sessiondata:
+                id_list.append(result[0])
         if len(query_results) != limit:
             product_price = search_sql(sql_db,
                                        "SELECT selling_price FROM products WHERE product_id='{}'".format(product_id))
@@ -30,7 +31,8 @@ def alternatives(sql_db, sessiondata):
                                            "SELECT product_id FROM products WHERE category='{}' AND selling_price BETWEEN {}*0.8 AND {}*1.2 ORDER BY RANDOM() LIMIT {}".format(
                                                product_cat[0][0], product_price, product_price, limit_cat))
             for result_cat in query_results_cat:
-                id_list.append(result_cat[0])
+                if result_cat[0] not in sessiondata:
+                    id_list.append(result_cat[0])
     return id_list
 
 
@@ -160,3 +162,12 @@ def get_homepage_products(sql_connection, visitor_id):
         personal = random.sample(personal_all, 3)
         popular = random.sample(popular_all, 3)
     return personal + popular
+
+
+def similar_productnames(sql_connection, sessiondata):
+    id_list = []
+    product_name = sessiondata['productname']
+    similar_named_products = search_sql(sql_connection, "SELECT products.product_id FROM products WHERE soundex(products.name) = soundex('{}');".format(product_name))
+    for id in similar_named_products:
+        id_list.append(id[0])
+    return id_list

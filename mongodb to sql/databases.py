@@ -26,7 +26,7 @@ def drop_create_database(dbname, dbrootname, dbuser, dbpassword):
         cur.execute('REVOKE CONNECT ON DATABASE {} FROM public;'.format(dbname))
         cur.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '{}';".format(dbname))
         cur.execute('DROP DATABASE IF EXISTS {}'.format(dbname))
-    cur.execute('CREATE DATABASE {}'.format(dbname))
+    cur.execute('CREATE DATABASE {};'.format(dbname))
     sql_db.autocommit = False
     cur.close()
 

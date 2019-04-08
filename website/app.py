@@ -1,6 +1,6 @@
 from flask import Flask, send_from_directory, jsonify, redirect, request
 from database_connections import mdb_connectie, connect_sql
-from generate_id_list import homepage, personal, collaborative, shoppingcart, loadselected, selectedsimilar
+from generate_id_list import homepage, personal, collaborative, shoppingcart, loadselected, selectedsimilar, search_on_name
 from lift_calculation import lift
 
 app = Flask(__name__)
@@ -57,9 +57,14 @@ def getsimilar():
     sessiondata = request.json
     return jsonify(selectedsimilar(sql_db, mongo_db, sessiondata))
 
+@app.route('/searchedproduct', methods=['POST'])
+def searchproducts():
+    sessiondata = request.json
+    return jsonify(search_on_name(sql_db, mongo_db, sessiondata))
+
 
 if __name__ == '__main__':
     mongo_db = mdb_connectie("voordeelshop")  # ophalen connectie MongoDB
-    sql_db = connect_sql('voordeelshop', 'postgres', 'Welkom01!')  # ophalen connectie SQL
+    sql_db = connect_sql('voordeelshop_complete', 'postgres', 'Welkom01!')  # ophalen connectie SQL
     #lift(sql_db) # berekenen en invoeren lift
     app.run()  # starten applicatie

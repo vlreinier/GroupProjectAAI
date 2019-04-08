@@ -4,6 +4,7 @@ from sql_functions import commit_sql
 def drop_tables(sql_connection):
     query = (
         """
+    CREATE EXTENSION fuzzystrmatch;
 	DROP TABLE IF EXISTS products CASCADE;
 	DROP TABLE IF EXISTS sessions CASCADE;
 	DROP TABLE IF EXISTS visitors CASCADE;

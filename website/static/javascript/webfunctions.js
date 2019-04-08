@@ -35,6 +35,19 @@ function loadSelectedProductsPage() {
         .then(products_json => showProductsInTable(products_json, 'products'));
 }
 
+function getProductsOnName() {
+	let name = document.forms['productname'].name.value;
+	emptyTable('products');
+	showProductName(name);
+	let data = {productname : name};
+    fetch('/searchedproduct', {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data) })
+        .then(response => response.json())
+        .then(products_json => showProductsInTable(products_json, 'products'));
+}
+
 // functie voor het opvragen van persoonlijke producten a.d.h.v. bezoekersid
 function loadPersonalPopularProducts(fetchpath) {
     let sessionData = { visitor_id : showVisitorId()};
@@ -148,6 +161,10 @@ function showVisitorId() {
 	if (visitor_id !== null) {
 		document.getElementById("showvisitorid").innerHTML = sessionStorage.getItem('visitor_id'); }
 	return sessionStorage.getItem('visitor_id');
+}
+
+function showProductName(name) {
+	document.getElementById("showproductname").innerHTML = name;
 }
 
 // haalt alle waardes uit LocalStorage en slaat deze op in een dictionary
