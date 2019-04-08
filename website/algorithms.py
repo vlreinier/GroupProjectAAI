@@ -15,6 +15,7 @@ def alternatives(sql_db, sessiondata):
         limit = 2
     else:
         limit = 1
+
     for product_id in sessiondata:
         query_results = search_sql(sql_db,
                                    "SELECT related, lift FROM lift_products WHERE product_id ='{}' ORDER BY lift DESC limit {}".format(
@@ -22,14 +23,14 @@ def alternatives(sql_db, sessiondata):
         for result in query_results:
             if result[0] not in sessiondata:
                 id_list.append(result[0])
+
         if len(query_results) != limit:
-            product_price = search_sql(sql_db,
-                                       "SELECT selling_price FROM products WHERE product_id='{}'".format(product_id))
             limit_cat = limit - len(query_results)
-            product_cat = search_sql(sql_db, "SELECT category FROM products WHERE product_id='{}'".format(product_id))
+            product_properties = search_sql(sql_db,
+                                       "SELECT selling_price,category FROM products WHERE product_id='{}'".format(product_id))
             query_results_cat = search_sql(sql_db,
-                                           "SELECT product_id FROM products WHERE category='{}' AND selling_price BETWEEN {}*0.8 AND {}*1.2 ORDER BY RANDOM() LIMIT {}".format(
-                                               product_cat[0][0], product_price, product_price, limit_cat))
+                                           "SELECT product_id FROM products WHERE category='{}' AND selling_price BETWEEN {}*0.87 AND {}*1.13 ORDER BY RANDOM() LIMIT {}".format(
+                                               product_properties[0][1], product_properties[0][0], product_properties[0][0], limit_cat))
             for result_cat in query_results_cat:
                 if result_cat[0] not in sessiondata:
                     id_list.append(result_cat[0])
@@ -111,7 +112,7 @@ def get_highest_occurence(ordered):
 
 # berekenen persoonlijke aanbeveling
 def personal_preffered_products(sql_connection, visitor_id):
-    if (visitor_id['visitor_id'] == '') or (visitor_id['visitor_id'] == None):
+    if (visitor_id['visitor_id'] == '') or (visitor_id['visitor_id'] is None):
         return []
     ordered = search_sql(sql_connection, """SELECT orders.product_id, products.sub_category, 
                                             products.sub_sub_category, products.brand, products.gender FROM visitors
@@ -166,8 +167,16 @@ def get_homepage_products(sql_connection, visitor_id):
 
 def similar_productnames(sql_connection, sessiondata):
     id_list = []
-    product_name = sessiondata['productname']
-    similar_named_products = search_sql(sql_connection, "SELECT products.product_id FROM products WHERE soundex(products.name) = soundex('{}');".format(product_name))
-    for id in similar_named_products:
-        id_list.append(id[0])
+    if 'productname' in sessiondata:
+        similar_named_products = search_sql(sql_connection, "SELECT products.product_id FROM products WHERE products.name ILIKE '%{0}%'".format(sessiondata['productname']))
+        for id in similar_named_products:
+            id_list.append(id[0])
+    if 'productid' in sessiondata:
+        sub_sub_category = search_sql(sql_connection, "SELECT sub_sub_category FROM products WHERE product_id ='{}'".format(sessiondata['productid']))
+        if len(sub_sub_category) == 0:
+            return []
+        similar_id_products = search_sql(sql_connection, "SELECT product_id FROM products WHERE sub_sub_category = '{}' LIMIT 20;".format(sub_sub_category[0][0]))
+        id_list.append(sessiondata['productid'])
+        for id in similar_id_products:
+            id_list.append(id[0])
     return id_list

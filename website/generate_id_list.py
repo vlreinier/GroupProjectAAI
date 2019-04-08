@@ -19,12 +19,14 @@ def collaborative(sql_db, mongo_db, sessiondata):
     id_list = alternatives(sql_db, sessiondata)
     return get_product_details(mongo_db, id_list, True, 6)
 
+
 # laad opgeslagen producten in winkelwagen
 def shoppingcart(sql_db, mongo_db, sessiondata):
     id_list = []
     for id in sessiondata:
         id_list.append(str(id))
     return get_product_details(mongo_db, id_list, False, 0)
+
 
 # laad aangeklikt product op similar page
 def loadselected(sql_db, mongo_db, sessiondata):
@@ -42,7 +44,8 @@ def selectedsimilar(sql_db, mongo_db, sessiondata):
     id_list = content_tree(sql_db, id_list)
     return get_product_details(mongo_db, id_list, False, 10)
 
+
 # functie voor het ophalen van klantgedrag aanbevelingen a.d.h.v. opgeslagen producten
 def search_on_name(sql_db, mongo_db, sessiondata):
     id_list = similar_productnames(sql_db, sessiondata)
-    return get_product_details(mongo_db, id_list, False, 20)
+    return get_product_details(mongo_db, id_list, False, 80)
