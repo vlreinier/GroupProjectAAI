@@ -4,11 +4,16 @@
 <meta charset="UTF-8">
 <title>Index</title>
 <link rel="stylesheet" type="text/css" href="style.css">
-<body onload="loadProducts('popularproducts', 'products');showVisitorId();">
+<body onload="loadPersonalPopularProducts('popularproducts');showVisitorId();">
 	<form id="visitorid">
-		<label style="float: left; width: 350px;">Opslaan bezoekerid (5a393eceed295900010386a8): </label><input type="text" name="_id" />
-		<button style="background-color: #4CAF50;color: white;font-size:15px;" type="button" onclick="saveVisitorId();">Bevestig</button>
+		<label style="float: left; width: 170px;">Opslaan bezoekerid: </label><input type="text" name="_id" />
+		<button style="background-color: #4CAF50;color: white;font-size:15px;" type="button" onclick="saveVisitorId();">Log in</button>
 		<label style="margin-left:15px;font-style: italic" id="showvisitorid"></label>
+	</form>
+	<form id="productname">
+		<label style="float: left; width: 170px;">Zoek op productnaam: </label><input type="text" name="name" />
+		<button style="background-color: #4CAF50;color: white;font-size:15px;" type="button" onclick="getProductsOnName();">Zoek</button>
+		<label style="margin-left:15px;font-style: italic" id="showproductname"></label>
 	</form><br>
 	<button style="height:50px;width:200px;background-color: #4CAF50;color: white;" onclick="window.location.href = 'collaborative_filtering.html';">Winkelwagentje</button>
 	<button style="height:50px;width:200px;background-color: #4CAF50;color: white;" onclick="window.location.href = 'personal.html';">Bezoekersid aanbeveling</button><br><br>

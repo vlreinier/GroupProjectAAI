@@ -2,12 +2,19 @@
 function loadProductsShoppingcart() {
 	let values = allStorage();
 	emptyTable('savedproducts');
+	emptyTable('products');
     fetch('/shoppingcart', {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(values) })
         .then(response => response.json())
         .then(products_json => showCartInTable(products_json));
+    fetch('/collaborativefiltering', {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(values) })
+        .then(response => response.json())
+        .then(products_json => showProductsInTable(products_json,'products'));
 }
 
 // functie voor het opvragen van specifieke producten
@@ -28,28 +35,29 @@ function loadSelectedProductsPage() {
         .then(products_json => showProductsInTable(products_json, 'products'));
 }
 
+function getProductsOnName() {
+	let name = document.forms['productname'].name.value;
+	emptyTable('products');
+	showProductName(name);
+	let data = {productname : name};
+    fetch('/searchedproduct', {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data) })
+        .then(response => response.json())
+        .then(products_json => showProductsInTable(products_json, 'products'));
+}
+
 // functie voor het opvragen van persoonlijke producten a.d.h.v. bezoekersid
-function loadPersonalProducts() {
+function loadPersonalPopularProducts(fetchpath) {
     let sessionData = { visitor_id : showVisitorId()};
 	emptyTable('products');
-    fetch('/personalproducts', {
+    fetch('/'+fetchpath, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(sessionData) })
         .then(response => response.json())
         .then(products_json => showProductsInTable(products_json, 'products'));
-}
-
-// functie voor het opvragen van specifieke producten
-function loadProducts(filtering, tableid) {
-	let values = allStorage();
-	emptyTable(tableid);
-    fetch('/'+filtering, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(values) })
-        .then(response => response.json())
-        .then(products_json => showProductsInTable(products_json, tableid));
 }
 
 // functie voor laden van productdetails in tabel
@@ -85,7 +93,7 @@ function element(name, ...childs) {
 
 // functie voor het aanmaken van een textelement voor tabel
 function text(value) {
-    return document.createTextNode(value)
+    return document.createTextNode(value);
 }
 
 // functie voor het aanmaken van een textelement voor tabel
@@ -104,6 +112,7 @@ function link(href, value) {
     link.setAttribute("style", 'color:blue;text-decoration:underline');
     return link;
 }
+
 // functie voor het aanmaken van een buttonelement voor tabel add to localstorage
 function addtostorage_button(id, name) {
 	let button = document.createElement('input');
@@ -114,16 +123,6 @@ function addtostorage_button(id, name) {
 	return button;
 }
 
-// functie voor het zoeken op vergelijkbare producten
-function similarproducts_button(id) {
-	let button = document.createElement('input');
-	button.setAttribute('type', 'button');
-	button.setAttribute('value', 'Vergelijkbare producten');
-	button.style.fontSize = '20px';
-	button.setAttribute('onClick', "addSessionStorage("+JSON.stringify(id)+");window.location = 'similar.html';");
-	return button;
-}
-
 // functie voor het aanmaken van een buttonelement voor tabel remove from localstorage
 function removefromstorage_button(id) {
 	let button = document.createElement('input');
@@ -131,7 +130,7 @@ function removefromstorage_button(id) {
 	button.setAttribute('value', 'verwijder');
 	button.style.fontSize = '20px';
 	button.setAttribute('onClick',"removefromlocalstorage("+JSON.stringify(id)+");loadProductsShoppingcart();");
-	return button
+	return button;
 }
 
 // functie voor het toevoegen aan LocalStorage
@@ -158,8 +157,14 @@ function saveVisitorId() {
 }
 
 function showVisitorId() {
-	document.getElementById("showvisitorid").innerHTML = sessionStorage.getItem('visitor_id');
+	visitor_id = sessionStorage.getItem('visitor_id');
+	if (visitor_id !== null) {
+		document.getElementById("showvisitorid").innerHTML = sessionStorage.getItem('visitor_id'); }
 	return sessionStorage.getItem('visitor_id');
+}
+
+function showProductName(name) {
+	document.getElementById("showproductname").innerHTML = name;
 }
 
 // haalt alle waardes uit LocalStorage en slaat deze op in een dictionary
@@ -176,6 +181,5 @@ function allStorage() {
 function emptyTable(tableid){
 	let tableRef = document.getElementById(tableid);
 	while (tableRef.rows.length > 1 ) {
-		tableRef.deleteRow(1);
-		}
+		tableRef.deleteRow(1); }
 }
