@@ -171,3 +171,27 @@ def similar_productnames(sql_connection, sessiondata):
     for id in similar_named_products:
         id_list.append(id[0])
     return id_list
+
+def season_products(sql_connection):
+    qry="SELECT tb1.product_id,aantal_in_orders, aantal_in_seizoen,(CAST(aantal_in_seizoen AS float)/CAST(aantal_in_orders AS float)) as season_popularity FROM(" \
+        "SELECT product_id,count(product_id) as aantal_in_orders" \
+        "FROM orders" \
+        "where product_id in" \
+        "(select distinct product_id  from orders" \
+        "inner join sessions on sessions.session_id=orders.session_id" \
+        "where sessions.session_start>(current_date-interval'6 months')" \
+        "and sessions.session_start<(current_date-interval'3 months'))" \
+        "group by product_id" \
+        "order by aantal_in_orders DESC" \
+        ") AS tb1" \
+        "INNER JOIN (SELECT product_id,count(product_id) as aantal_in_seizoen" \
+        "FROM (select product_id  from orders" \
+        "inner join sessions on sessions.session_id=orders.session_id" \
+        "where sessions.session_start>(current_date-interval'6 months')" \
+        "and sessions.session_start<(current_date-interval'3 months')) as seizoens_aankopen" \
+        "GROUP BY product_id" \
+        "ORDER BY aantal_in_seizoen DESC) as tb2 on tb2.product_id=tb1.product_id" \
+        "ORDER BY season_popularity DESC" \
+        "limit 8"
+    s_products=search_sql(sql_connection,qry)
+

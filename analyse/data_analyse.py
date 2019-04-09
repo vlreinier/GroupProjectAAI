@@ -17,33 +17,36 @@ sql_db = psycopg2.connect("dbname={} user={} password={}".format('voordeelshop',
 
 
 local_list=[]
+first_data_list=[]
 change_dict={}
-for dag in range(1,12):
+
+for dag in range(1,28):
     change=0
     dag2=dag+1
     if dag<10:
         if dag2<10:
-            dag2='0'+str(dag2)
-        dag='0'+str(dag)
+            dag2_str='0'+str(dag2)
+        dag_str='0'+str(dag)
     else:
-        dag2=str(dag2)
-        dag=str(dag)
+        dag2_str=str(dag2)
+        dag_str=str(dag)
     qry="select product_id, count( orders.product_id) as aantal from orders " \
         "inner join sessions on sessions.session_id=orders.session_id " \
-        "where sessions.session_start>'2018-01-{} 15:40:46.619000' and sessions.session_start<'2018-02-{} 15:40:46.619000' " \
+        "where sessions.session_end>'2017-11-{} 15:40:46.619000' and sessions.session_end<'2017-12-{} 15:40:46.619000' " \
         "group by orders.product_id " \
-        "order by aantal DESC limit 6".format(dag,dag2)
+        "order by aantal DESC limit 6".format(dag_str,dag2_str)
 
     cursor=sql_db.cursor()
     cursor.execute(qry)
     data=cursor.fetchall()
     print('dag ',dag)
-    print(qry)
-    print(data)
+    print('data',data)
+
 
     if dag==1:
         for i in data:
             local_list.append(i[0])
+            first_data_list.append(i[0])
     else:
         for i in data:
             if i[0] not in local_list:
@@ -53,6 +56,9 @@ for dag in range(1,12):
         change_dict[dag]='changed'
     else:
         change_dict[dag]='same'
+
+
+print(first_data_list)
 print(change_dict)
 
 
