@@ -11,7 +11,9 @@ def alternatives(sql_db, sessiondata):
         limit = 6
     elif len(sessiondata) == 2:
         limit = 3
-    elif len(sessiondata) == 3 or 4:
+    elif len(sessiondata) == 3:
+        limit = 2
+    elif len(sessiondata) == 4:
         limit = 2
     else:
         limit = 1
@@ -39,6 +41,18 @@ def alternatives(sql_db, sessiondata):
 # functie voor het ophalen van soortgelijke producten
 def content_tree(sql_db, sessiondata):
     product_ids = []
+    if len(sessiondata) == 0:
+        return product_ids
+    elif len(sessiondata) == 1:
+        limit = 6
+    elif len(sessiondata) == 2:
+        limit = 3
+    elif len(sessiondata) == 3:
+        limit = 2
+    elif len(sessiondata) == 4:
+        limit = 2
+    else:
+        limit = 1
     for product_id in sessiondata:
         query_results = search_sql(sql_db,
                                    "SELECT category, sub_category, sub_sub_category, selling_price, gender, brand FROM products WHERE product_id = '{}'".format(
@@ -50,25 +64,27 @@ def content_tree(sql_db, sessiondata):
         gender = query_results[4]
         brand = query_results[5]
         query_results1 = search_sql(sql_db,
-                                    "SELECT product_id FROM products WHERE category = '{}' AND sub_category = '{}' AND sub_sub_category = '{}' AND selling_price BETWEEN {} AND {} AND gender = '{}' AND brand = '{}' ORDER BY RANDOM() LIMIT 8".format(
+                                    "SELECT product_id FROM products WHERE category = '{}' AND sub_category = '{}' AND sub_sub_category = '{}' AND selling_price BETWEEN {} AND {} AND gender = '{}' AND brand = '{}' ORDER BY RANDOM() LIMIT {}".format(
                                         category, sub_category, sub_sub_category, int(selling_price) * 0.87,
                                                                                   int(selling_price) * 1.13, gender,
-                                        brand))
+                                        brand, limit))
         for result in query_results1:
             if result[0] != product_id:
                 product_ids.append(result[0])
-        if (len(query_results1) < 5) or ((len(product_ids) < 15) and (len(sessiondata) == 1)):
+        if len(query_results1) != limit:
+            limit1 = limit - len(query_results1)
             query_results2 = search_sql(sql_db,
-                                        "SELECT product_id FROM products WHERE category = '{}' AND sub_category = '{}' AND sub_sub_category = '{}' AND selling_price BETWEEN {} AND {} ORDER BY RANDOM() LIMIT 8".format(
+                                        "SELECT product_id FROM products WHERE category = '{}' AND sub_category = '{}' AND sub_sub_category = '{}' AND selling_price BETWEEN {} AND {} ORDER BY RANDOM() LIMIT {}".format(
                                             category, sub_category, sub_sub_category, int(selling_price) * 0.80,
-                                                                                      int(selling_price) * 1.20))
+                                                                                      int(selling_price) * 1.20, limit1))
             for result in query_results2:
                 if result[0] != product_id:
                     product_ids.append(result[0])
-            if len(query_results2) < 5:
+            if len(query_results2 != limit1):
+                limit2 = limit1 - len(query_results2)
                 query_results3 = search_sql(sql_db,
-                                            "SELECT product_id FROM products WHERE category = '{}' AND selling_price BETWEEN {} AND {} ORDER BY RANDOM() LIMIT 8".format(
-                                                category, int(selling_price) * 0.80, int(selling_price) * 1.20))
+                                            "SELECT product_id FROM products WHERE category = '{}' AND selling_price BETWEEN {} AND {} ORDER BY RANDOM() LIMIT {}".format(
+                                                category, int(selling_price) * 0.80, int(selling_price) * 1.20, limit2))
                 for result in query_results3:
                     if result[0] != product_id:
                         product_ids.append(result[0])
@@ -79,16 +95,13 @@ def content_tree(sql_db, sessiondata):
 def get_highest_occurence(ordered):
     new_list, product_ids, favourites, most_wanted = [], [], [], []
     sub_category, sub_sub_category, brand, gender = [], [], [], []
-
     if len(ordered) == 0:
         return new_list, favourites
     for i in ordered:
         product_ids.append(i[0])
-        sub_category.append(i[1])
-        sub_sub_category.append(i[2])
-        brand.append(i[3])
-        gender.append(i[4])
-    counted_properties = Counter(sub_category) + Counter(sub_sub_category) + Counter(brand) + Counter(gender)
+        sub_sub_category.append(i[1])
+        brand.append(i[2])
+    counted_properties = Counter(sub_sub_category) + Counter(brand)
     counted_products = Counter(product_ids)
 
     for i in counted_products:
@@ -98,7 +111,7 @@ def get_highest_occurence(ordered):
     for i in counted_properties:
         if counted_properties[i] > 2:
             most_wanted.append(i)
-    if len(most_wanted) == 0:
+    if len(most_wanted) < 2:
         most_wanted = product_ids
 
     for i in ordered:
@@ -113,17 +126,17 @@ def get_highest_occurence(ordered):
 def personal_preffered_products(sql_connection, visitor_id):
     if (visitor_id['visitor_id'] == '') or (visitor_id['visitor_id'] == None):
         return []
-    ordered = search_sql(sql_connection, """SELECT orders.product_id, products.sub_category, 
-                                            products.sub_sub_category, products.brand, products.gender FROM visitors
+    ordered = search_sql(sql_connection, """SELECT orders.product_id, 
+                                            products.sub_sub_category, products.brand FROM visitors
                                             INNER JOIN buids on visitors.visitor_id = buids.visitor_id 
                                             INNER JOIN sessions on buids.buid = sessions.buid 
                                             INNER JOIN orders on sessions.session_id = orders.session_id 
                                             INNER JOIN products on orders.product_id = products.product_id 
                                             WHERE visitors.visitor_id = '{}'""".format(visitor_id['visitor_id']))
     id_list, favourites = get_highest_occurence(ordered)
-    if len(id_list) < 2:
-        viewed = search_sql(sql_connection, """SELECT distinct(viewed_before.product_id), products.sub_category,
-                                            products.sub_sub_category, products.brand,products.gender FROM visitors   
+    if len(id_list) == 0:
+        viewed = search_sql(sql_connection, """SELECT distinct(viewed_before.product_id),
+                                            products.sub_sub_category, products.brand FROM visitors   
                                             INNER JOIN viewed_before on visitors.visitor_id = viewed_before.visitor_id
                                             INNER JOIN products on viewed_before.product_id = products.product_id 
                                             INNER JOIN buids on visitors.visitor_id = buids.visitor_id 
