@@ -2,6 +2,7 @@ from flask import Flask, send_from_directory, jsonify, redirect, request
 from database_connections import mdb_connectie, connect_sql
 from generate_id_list import homepage, personal, collaborative, shoppingcart, loadselected, selectedsimilar, search_on_name
 from lift_calculation import lift
+from algorithms import calculate_timespan
 
 app = Flask(__name__)
 
@@ -63,8 +64,13 @@ def searchproducts():
     return jsonify(search_on_name(sql_db, mongo_db, sessiondata))
 
 
+
+
 if __name__ == '__main__':
+
     mongo_db = mdb_connectie("voordeelshop")  # ophalen connectie MongoDB
     sql_db = connect_sql('voordeelshop', 'postgres', 'Tom-1998')  # ophalen connectie SQL
-    lift(sql_db) # berekenen en invoeren lift
+    #lift(sql_db) # berekenen en invoeren lift
+    data=calculate_timespan(sql_db,20)
+    print(data)
     app.run()  # starten applicatie
