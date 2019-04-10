@@ -19,7 +19,7 @@ def get_product_details(mongo_db, id_list, shuffle, maximum):
                 seen.add(product_id)
                 dict['image'] = product['images'][0][0]
                 if dict['image'] == None:
-                    dict['image'] = "https://www.nomadfoods.com/wp-content/uploads/2018/08/placeholder-1-e1533569576673-960x960.png"
+                    dict['image'] = "https://upload.wikimedia.org/wikipedia/commons/a/ac/No_image_available.svg"
                 dict['name'] = product['name']
                 dict['price'] = '€' + str(product['price']['selling_price'])[:-2] + ',' + str(
                     product['price']['selling_price'])[-2:]

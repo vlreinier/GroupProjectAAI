@@ -39,7 +39,8 @@ function getProductsOnName() {
 	let name = document.forms['productname'].name.value;
 	emptyTable('products');
 	showProductName(name);
-	let data = {productname : name};
+	let selected = 'product'+ document.getElementById("nameorid").value;
+	let data = {[selected]: name};
     fetch('/searchedproduct', {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -131,6 +132,15 @@ function removefromstorage_button(id) {
 	button.style.fontSize = '20px';
 	button.setAttribute('onClick',"removefromlocalstorage("+JSON.stringify(id)+");loadProductsShoppingcart();");
 	return button;
+}
+
+// updaten winkelwagentje inhoud hoeveelheid
+function updateCartStatus() {
+	var length = '('+ localStorage.length +')';
+	if (localStorage.length === 0) {
+		var length = '';
+	}
+	document.getElementById("cartbutton").innerHTML = 'Winkelwagentje' + length
 }
 
 // functie voor het toevoegen aan LocalStorage
