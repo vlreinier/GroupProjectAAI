@@ -22,10 +22,7 @@ def alternatives(sql_db, sessiondata):
         query_results = search_sql(sql_db,
                                    """SELECT distinct(lift_products.related), lift_products.lift FROM lift_products
                                         INNER JOIN products on lift_products.related = products.product_id
-                                        INNER JOIN orders on products.product_id = orders.product_id
-                                        INNER JOIN sessions on orders.session_id = sessions.session_id
-                                        WHERE sessions.session_end > CURRENT_DATE - INTERVAL '3 months'
-                                        AND lift_products.product_id ='{}' ORDER BY lift DESC limit {}""".format(product_id, limit))
+                                        WHERE lift_products.product_id ='{}' ORDER BY lift DESC limit {}""".format(product_id, limit))
         for result in query_results:
             if result[0] not in sessiondata:
                 id_list.append(result[0])
@@ -85,7 +82,7 @@ def content_tree(sql_db, sessiondata):
             for result in query_results2:
                 if result[0] != product_id:
                     product_ids.append(result[0])
-            if len(query_results2 != limit1):
+            if len(query_results2) != limit1:
                 limit2 = limit1 - len(query_results2)
                 query_results3 = search_sql(sql_db,
                                             "SELECT product_id FROM products WHERE category = '{}' AND selling_price BETWEEN {} AND {} ORDER BY RANDOM() LIMIT {}".format(
@@ -131,12 +128,12 @@ def get_highest_occurence(ordered):
 def personal_preffered_products(sql_connection, visitor_id):
     if (visitor_id['visitor_id'] == '') or (visitor_id['visitor_id'] is None):
         return []
-    ordered = search_sql(sql_connection, """SELECT orders.product_id, 
+    ordered = search_sql(sql_connection, """SELECT distinct(orders.product_id), 
                                             products.sub_sub_category, products.brand FROM visitors
                                             INNER JOIN buids on visitors.visitor_id = buids.visitor_id 
                                             INNER JOIN sessions on buids.buid = sessions.buid 
                                             INNER JOIN orders on sessions.session_id = orders.session_id 
-                                            INNER JOIN products on orders.product_id = products.product_id 
+                                            INNER JOIN products on orders.product_id = products.product_id
                                             WHERE visitors.visitor_id = '{}'""".format(visitor_id['visitor_id']))
     id_list, favourites = get_highest_occurence(ordered)
     if len(id_list) == 0:
@@ -152,12 +149,12 @@ def personal_preffered_products(sql_connection, visitor_id):
 
 
 # berekening populaire producten
-def get_homepage_products(sql_connection, visitor_id):
+def get_homepage_products(sql_connection, visitor_id, timespan):
     popular_all = []
     popular_orders_last_3months = search_sql(sql_connection, """SELECT orders.product_id FROM sessions
                                                                 INNER JOIN orders ON sessions.session_id = orders.session_id
-                                                                WHERE sessions.session_start > CURRENT_DATE - INTERVAL '3 months'
-                                                                GROUP BY orders.product_id ORDER BY COUNT(*) DESC LIMIT 40""")
+                                                                WHERE sessions.session_start > CURRENT_DATE - INTERVAL '{} months'
+                                                                GROUP BY orders.product_id ORDER BY COUNT(*) DESC LIMIT 40""".format(timespan))
     for tuple in popular_orders_last_3months:
         popular_all.append(tuple[0])
 
@@ -166,9 +163,9 @@ def get_homepage_products(sql_connection, visitor_id):
                                                                   INNER JOIN visitors ON viewed_before.visitor_id = visitors.visitor_id
                                                                   INNER JOIN buids ON visitors.visitor_id = buids.visitor_id
                                                                   INNER JOIN sessions ON buids.buid = sessions.buid
-                                                                  WHERE sessions.session_start > CURRENT_DATE - INTERVAL '3 months'
+                                                                  WHERE sessions.session_start > CURRENT_DATE - INTERVAL '{} months'
                                                                   GROUP BY viewed_before.product_id
-                                                                  ORDER BY COUNT(viewed_before.product_id) DESC LIMIT 40""")
+                                                                  ORDER BY COUNT(viewed_before.product_id) DESC LIMIT 40""".format(timespan))
         for tuple in popular_viewed_last_3months:
             popular_all.append(tuple[0])
 

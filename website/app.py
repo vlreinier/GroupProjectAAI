@@ -20,7 +20,7 @@ def download_file(filename):
 @app.route('/popularproducts', methods=['POST'])
 def popularproducts():
     sessiondata = request.json
-    return jsonify(homepage(sql_db, mongo_db, sessiondata))
+    return jsonify(homepage(sql_db, mongo_db, sessiondata, timespan))
 
 
 @app.route('/personalproducts', methods=['POST'])
@@ -33,12 +33,6 @@ def personalproducts():
 def collaborativeproducts():
     sessiondata = request.json
     return jsonify(collaborative(sql_db, mongo_db, sessiondata))
-
-
-@app.route('/contentfiltering', methods=['POST'])
-def contentproducts():
-    sessiondata = request.json
-    return jsonify(content(sql_db, mongo_db, sessiondata))
 
 
 @app.route('/shoppingcart', methods=['POST'])
@@ -66,8 +60,7 @@ def searchproducts():
 
 if __name__ == '__main__':
     mongo_db = mdb_connectie("voordeelshop")  # ophalen connectie MongoDB
-    sql_db = connect_sql('voordeelshop', 'postgres', 'Tom-1998')  # ophalen connectie SQL
-    timespan=calculate_timespan(sql_db,20)
-    print(timespan)
+    sql_db = connect_sql('voordeelshop_complete', 'postgres', 'Welkom01!')  # ophalen connectie SQL
+    timespan = calculate_timespan(sql_db, 20)
     #lift(sql_db) # berekenen en invoeren lift
     app.run()  # starten applicatie
