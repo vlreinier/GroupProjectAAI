@@ -20,8 +20,12 @@ def alternatives(sql_db, sessiondata):
 
     for product_id in sessiondata:
         query_results = search_sql(sql_db,
-                                   "SELECT related, lift FROM lift_products WHERE product_id ='{}' ORDER BY lift DESC limit {}".format(
-                                       product_id, limit))
+                                   """SELECT distinct(lift_products.related), lift_products.lift FROM lift_products
+                                        INNER JOIN products on lift_products.related = products.product_id
+                                        INNER JOIN orders on products.product_id = orders.product_id
+                                        INNER JOIN sessions on orders.session_id = sessions.session_id
+                                        WHERE sessions.session_end > CURRENT_DATE - INTERVAL '3 months'
+                                        AND lift_products.product_id ='{}' ORDER BY lift DESC limit {}""".format(product_id, limit))
         for result in query_results:
             if result[0] not in sessiondata:
                 id_list.append(result[0])
@@ -193,6 +197,7 @@ def similar_productnames(sql_connection, sessiondata):
         for id in similar_id_products:
             id_list.append(id[0])
     return id_list
+
 
 def season_products(sql_connection,sessiondata):
     qry="SELECT tb1.product_id,aantal_in_orders, aantal_in_seizoen,(CAST(aantal_in_seizoen AS float)/CAST(aantal_in_orders AS float)) as season_popularity FROM( " \
