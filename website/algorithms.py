@@ -17,44 +17,34 @@ def alternatives(sql_db, sessiondata):
         limit = 2
     else:
         limit = 1
-
     for product_id in sessiondata:
+        results = []
         query_results = search_sql(sql_db,
                                    """SELECT distinct(lift_products.related), lift_products.lift FROM lift_products
                                         INNER JOIN products on lift_products.related = products.product_id
                                         WHERE lift_products.product_id ='{}' ORDER BY lift DESC limit {}""".format(product_id, limit))
         for result in query_results:
             if result[0] not in sessiondata:
-                id_list.append(result[0])
-
-        if len(query_results) != limit:
-            limit_cat = limit - len(query_results)
+                results.append(result[0])
+        if len(results) != limit:
+            limit_cat = limit - len(results)
             product_properties = search_sql(sql_db,
                                        "SELECT selling_price,category FROM products WHERE product_id='{}'".format(product_id))
             query_results_cat = search_sql(sql_db,
                                            "SELECT product_id FROM products WHERE category='{}' AND selling_price BETWEEN {}*0.87 AND {}*1.13 ORDER BY RANDOM() LIMIT {}".format(
-                                               product_properties[0][1], product_properties[0][0], product_properties[0][0], limit_cat))
+                                               product_properties[0][1], product_properties[0][0], product_properties[0][0], limit_cat + 5))
             for result_cat in query_results_cat:
                 if result_cat[0] not in sessiondata:
-                    id_list.append(result_cat[0])
+                    results.append(result_cat[0])
+                    if len(results) == limit_cat:
+                        break
+        id_list = id_list + results
     return id_list
 
 
 # functie voor het ophalen van soortgelijke producten
 def content_tree(sql_db, sessiondata):
     product_ids = []
-    if len(sessiondata) == 0:
-        return product_ids
-    elif len(sessiondata) == 1:
-        limit = 6
-    elif len(sessiondata) == 2:
-        limit = 3
-    elif len(sessiondata) == 3:
-        limit = 2
-    elif len(sessiondata) == 4:
-        limit = 2
-    else:
-        limit = 1
     for product_id in sessiondata:
         query_results = search_sql(sql_db,
                                    "SELECT category, sub_category, sub_sub_category, selling_price, gender, brand FROM products WHERE product_id = '{}'".format(
@@ -66,27 +56,25 @@ def content_tree(sql_db, sessiondata):
         gender = query_results[4]
         brand = query_results[5]
         query_results1 = search_sql(sql_db,
-                                    "SELECT product_id FROM products WHERE category = '{}' AND sub_category = '{}' AND sub_sub_category = '{}' AND selling_price BETWEEN {} AND {} AND gender = '{}' AND brand = '{}' ORDER BY RANDOM() LIMIT {}".format(
+                                    "SELECT product_id FROM products WHERE category = '{}' AND sub_category = '{}' AND sub_sub_category = '{}' AND selling_price BETWEEN {} AND {} AND gender = '{}' AND brand = '{}' ORDER BY RANDOM() LIMIT 8".format(
                                         category, sub_category, sub_sub_category, int(selling_price) * 0.87,
                                                                                   int(selling_price) * 1.13, gender,
-                                        brand, limit))
+                                        brand))
         for result in query_results1:
             if result[0] != product_id:
                 product_ids.append(result[0])
-        if len(query_results1) != limit:
-            limit1 = limit - len(query_results1)
+        if (len(query_results1) < 5) or ((len(product_ids) < 15) and (len(sessiondata) == 1)):
             query_results2 = search_sql(sql_db,
-                                        "SELECT product_id FROM products WHERE category = '{}' AND sub_category = '{}' AND sub_sub_category = '{}' AND selling_price BETWEEN {} AND {} ORDER BY RANDOM() LIMIT {}".format(
+                                        "SELECT product_id FROM products WHERE category = '{}' AND sub_category = '{}' AND sub_sub_category = '{}' AND selling_price BETWEEN {} AND {} ORDER BY RANDOM() LIMIT 8".format(
                                             category, sub_category, sub_sub_category, int(selling_price) * 0.80,
-                                                                                      int(selling_price) * 1.20, limit1))
+                                                                                      int(selling_price) * 1.20))
             for result in query_results2:
                 if result[0] != product_id:
                     product_ids.append(result[0])
-            if len(query_results2) != limit1:
-                limit2 = limit1 - len(query_results2)
+            if len(query_results2) < 5:
                 query_results3 = search_sql(sql_db,
-                                            "SELECT product_id FROM products WHERE category = '{}' AND selling_price BETWEEN {} AND {} ORDER BY RANDOM() LIMIT {}".format(
-                                                category, int(selling_price) * 0.80, int(selling_price) * 1.20, limit2))
+                                            "SELECT product_id FROM products WHERE category = '{}' AND selling_price BETWEEN {} AND {} ORDER BY RANDOM() LIMIT 8".format(
+                                                category, int(selling_price) * 0.80, int(selling_price) * 1.20))
                 for result in query_results3:
                     if result[0] != product_id:
                         product_ids.append(result[0])
@@ -96,7 +84,7 @@ def content_tree(sql_db, sessiondata):
 # berekenen meest voorkomende producteigenschappen
 def get_highest_occurence(ordered):
     new_list, product_ids, favourites, most_wanted = [], [], [], []
-    sub_category, sub_sub_category, brand, gender = [], [], [], []
+    sub_sub_category, brand = [], []
     if len(ordered) == 0:
         return new_list, favourites
     for i in ordered:
@@ -170,12 +158,12 @@ def get_homepage_products(sql_connection, visitor_id, timespan):
             popular_all.append(tuple[0])
 
     personal_all = personal_preffered_products(sql_connection, visitor_id)
-    if len(personal_all) < 3:
-        personal = random.sample(personal_all, len(personal_all))
-        popular = random.sample(popular_all, 3 + (3 - len(personal_all)))
+    if len(personal_all) < 4:
+        personal = personal_all
+        popular = random.sample(popular_all, 4 + (4 - len(personal_all)))
     else:
-        personal = random.sample(personal_all, 3)
-        popular = random.sample(popular_all, 3)
+        personal = random.sample(personal_all, 4)
+        popular = random.sample(popular_all, 4)
     return personal + popular
 
 

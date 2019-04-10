@@ -37,5 +37,4 @@ def get_product_details(mongo_db, id_list, shuffle, maximum):
         except Exception:
             count -= 1
             continue
-
     return all_dict
