@@ -67,7 +67,7 @@ def searchproducts():
 if __name__ == '__main__':
     mongo_db = mdb_connectie("voordeelshop")  # ophalen connectie MongoDB
     sql_db = connect_sql('voordeelshop', 'postgres', 'Tom-1998')  # ophalen connectie SQL
-    timespan=calculate_timespan(sql_db,20)
+    timespan=calculate_timespan(sql_db,55)
     print(timespan)
     #lift(sql_db) # berekenen en invoeren lift
     app.run()  # starten applicatie

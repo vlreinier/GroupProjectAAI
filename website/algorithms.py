@@ -228,12 +228,19 @@ def calculate_timespan(sql_connection,grens_in_percentage):
                         WHERE sessions.session_start>(current_date-interval'12 months')"""
     aantal_orders=search_sql(sql_connection,qry_aantal_orders)[0][0]
 
+    begintime = search_sql(sql_connection, "SELECT session_start FROM sessions ORDER BY session_start ASC  LIMIT 1")[0][0]
+    endtime = search_sql(sql_connection, "SELECT session_start FROM sessions ORDER BY session_start DESC LIMIT 1")[0][0]
+    dataset_timespan = ((endtime - begintime).days) // 30
+
     for interval in [1,2,3,6,12]:
         timespan = interval
         amount_of_products=[]
         mean = 0
-        amount_of_periods=12//interval
-        for maanden_geleden in range(0,12,interval):
+        for maanden_geleden in range(0,dataset_timespan,interval):
+            if maanden_geleden+(0.5*interval)>dataset_timespan:
+                continue
+            print('data timespan',dataset_timespan)
+            print('interval',interval)
             qry="""SELECT count(orders.product_id)
                    FROM orders
                    INNER JOIN sessions on sessions.session_id=orders.session_id
@@ -241,9 +248,11 @@ def calculate_timespan(sql_connection,grens_in_percentage):
                    AND sessions.session_start<(current_date-interval'{} months')""".format(str(maanden_geleden+interval),str(maanden_geleden))
             data=search_sql(sql_connection,qry)
             amount_of_products.append(data[0][0])
+            print(qry)
         mean = sum(amount_of_products)/len(amount_of_products)
 
         if (mean/aantal_orders)*100>grens_in_percentage:
             break
+
     return timespan
 
