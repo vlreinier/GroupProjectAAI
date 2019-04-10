@@ -3,8 +3,8 @@ from algorithms import content_tree, get_homepage_products, personal_preffered_p
 
 
 # functie voor het ophalen populaire icm persoonlijke producten, staat op homepagina
-def homepage(sql_connection, mongo_db, visitor_id):
-    id_list = get_homepage_products(sql_connection, visitor_id)
+def homepage(sql_connection, mongo_db, visitor_id, timespan):
+    id_list = get_homepage_products(sql_connection, visitor_id, timespan)
     return get_product_details(mongo_db, id_list, True, 6)
 
 
