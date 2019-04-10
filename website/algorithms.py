@@ -244,7 +244,6 @@ def calculate_timespan(sql_connection,grens_in_percentage):
         mean = sum(amount_of_products)/len(amount_of_products)
 
         if (mean/aantal_orders)*100>grens_in_percentage:
-            print('break')
             break
     return timespan
 

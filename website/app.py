@@ -2,6 +2,7 @@ from flask import Flask, send_from_directory, jsonify, redirect, request
 from database_connections import mdb_connectie, connect_sql
 from generate_id_list import homepage, personal, collaborative, shoppingcart, loadselected, selectedsimilar, search_on_name
 from lift_calculation import lift
+from algorithms import calculate_timespan
 
 app = Flask(__name__)
 
@@ -66,5 +67,7 @@ def searchproducts():
 if __name__ == '__main__':
     mongo_db = mdb_connectie("voordeelshop")  # ophalen connectie MongoDB
     sql_db = connect_sql('voordeelshop', 'postgres', 'Tom-1998')  # ophalen connectie SQL
-    lift(sql_db) # berekenen en invoeren lift
+    timespan=calculate_timespan(sql_db,20)
+    print(timespan)
+    #lift(sql_db) # berekenen en invoeren lift
     app.run()  # starten applicatie
