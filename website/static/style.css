@@ -4,8 +4,9 @@
 }
 
 td {
-    font-family: Arial;
-
+    font-family: "Arial";
+    font-weight: lighter;
+    font-size: large;
 }
 
 body {
@@ -30,6 +31,9 @@ body {
 .zop {
     float: left;
     width: 65px;
+    font-family: "Arial";
+    font-weight: lighter;
+    font-size: large;
 }
 #productname input {
     border:none;
@@ -38,38 +42,44 @@ body {
 }
 #productname button{
     color: black;
-    font-size:15px;
     background-color: #f4d942;
     border:none;
+    font-size: 17px;
 }
 #navbar {
     margin: 0;
     padding: 0;
     overflow: hidden;
     background-color: #f4d942;
-
 }
+
 #navbar button:hover {
     background-color: #f4b342;
 }
 #cartbutton{
      float:left;
     height: 50px;
-    width: 200px;
+    width: 300px;
     background-color: #f4d942 ;
     color:black;
     border: none;
     margin:4px;
+    font-family: "Arial";
+    font-weight: lighter;
+    font-size: large;
  }
 #bezoekersid {
     height: 50px;
-    width: 200px;
+    width: 300px;
     background-color: #f4d942 ;
     color:black;
     border: none;
     float:left;
     display: inline-block;
     margin:4px;
+    font-family: "Arial";
+    font-weight: lighter;
+    font-size: large;
 }
 
 #products  {

@@ -65,11 +65,12 @@ function loadPersonalPopularProducts(fetchpath) {
 function showProductsInTable(products, tableid) {
     for (product of products) {
         let row = element("tr",
-			element("td", image(product['_id'], product['image'])),
+			element("td", image(product['image'])),
             element("td", text(product['name'])),
 			element("td", text(product['price'])),
 			element("td", text(product['availability'])),
 			element("td", addtostorage_button(product['_id'], product['name'])));
+        row.setAttribute('onClick', "addSessionStorage("+product['_id']+");window.location = 'similar.html';");
         document.querySelector("#"+tableid).appendChild(row); }
 }
 
@@ -78,7 +79,6 @@ function showCartInTable(products) {
     for (product of products) {
         let row = element("tr",
             element("td", text(product['name'])),
-            element("td", text(product['brand'])),
             element("td", text(product['price'])),
             element("td", removefromstorage_button(product['_id'])));
         document.querySelector("#savedproducts").appendChild(row); }
@@ -98,15 +98,11 @@ function text(value) {
 }
 
 // functie voor het aanmaken van een textelement voor tabel
-function image(id, src) {
+function image(src) {
     let img = new Image();
 	img.src = src;
 	img.style.height = '120px';
 	img.style.width = '120px';
-	img.onclick = function() {
-		addSessionStorage(id);
-		window.location = 'similar.html';
-	};
     return img;
 }
 
@@ -143,6 +139,7 @@ function updateCartStatus() {
 // functie voor het toevoegen aan LocalStorage
 function addtolocalstorage(id, name) {
 	localStorage.setItem(id, name);
+	event.stopPropagation();
 }
 
 // functie voor het verwijderen van een product uit localstorage
