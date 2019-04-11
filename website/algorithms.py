@@ -158,12 +158,12 @@ def get_homepage_products(sql_connection, visitor_id, timespan):
             popular_all.append(tuple[0])
 
     personal_all = personal_preffered_products(sql_connection, visitor_id)
-    if len(personal_all) < 4:
+    if len(personal_all) < 3:
         personal = personal_all
-        popular = random.sample(popular_all, 4 + (4 - len(personal_all)))
+        popular = random.sample(popular_all, 3 + (3 - len(personal_all)))
     else:
-        personal = random.sample(personal_all, 4)
-        popular = random.sample(popular_all, 4)
+        personal = random.sample(personal_all, 3)
+        popular = random.sample(popular_all, 3)
     return personal + popular
 
 
