@@ -5,6 +5,7 @@
 
 td {
     font-family: Arial;
+
 }
 
 body {
@@ -70,6 +71,13 @@ body {
     display: inline-block;
     margin:4px;
 }
-/*style="height:50px;width:200px;background-color: #4CAF50;color: white;"(cart)
-style="height:50px;width:200px;background-color: #4CAF50;color: white;"(bezoeker)
+
+#products  {
+    border-collapse: collapse;
+}
+#products tr:hover {
+    background-color: #cccccc;
+}
+/*Product pagina - gekozen product
  */
+
