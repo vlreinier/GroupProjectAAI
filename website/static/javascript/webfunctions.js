@@ -174,7 +174,7 @@ function showVisitorId() {
 }
 
 function showProductName(name) {
-	document.getElementById("showproductname").innerHTML = name;
+	document.getElementById("popprod").innerHTML = 'Zoekresultaten voor '+ name;
 }
 
 // haalt alle waardes uit LocalStorage en slaat deze op in een dictionary
