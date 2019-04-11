@@ -8,18 +8,21 @@
 <script src="javascript/webfunctions.js"></script>
 
 <body onload="loadProductsShoppingcart();">
-	<button style='font-size:20px;' onclick="window.location.href = 'index.html';" >&larr;</button>
-	<h2 id='contenttext'>Winkelwagentje</h2>
-	<table style="margin-left: 0px; border: 2px solid lightgrey" id='savedproducts'>
+	<!--Title homepage-->
+	<a href="index.html"><img class= "logo" src="https://werkenbijopisop.nl/img/f67f11070bd2b55d1c8ca88c15aecb279e3413c2.png"></a>
+	<br>
+	<br>
+	<h2>Jouw winkelwagen</h2>
+	<table style="margin-left: 0px;text-align: left" id='savedproducts'>
 		<tr>
-			<th width="8%"></th>
-            <th width="2%"></th>
-			<th width="3%"></th>
-            <th width="1%"></th>
+			<th width="8%">Productnaam</th>
+            <th width="2%">merk</th>
+			<th width="3%">Prijs</th>
+            <th width="1%">Aanpassen</th>
 		</tr>
 	</table><br>
-
-    <table id="products" style="text-align: left">
+	<h3>Anderen kochten ook:</h3>
+    <table id="products" style="text-align: left;border: 2px solid lightgrey"">
         <tr>
 			<th width="2%"></th>
             <th width="8%"></th>

@@ -1,7 +1,75 @@
+.logo{
+    height:80px;
+    width: 162px;
+}
+
 td {
     font-family: Arial;
 }
 
 body {
-    background-color: whitesmoke;
+    background-color: white;
 }
+#visitorid{
+    float: right;
+}
+#visitorid button{
+    border:none;
+    background-color: red;
+    color:white;
+    font-size: 15px;
+}
+
+#productname {
+    float: right;
+    background-color: #f4d942;
+    padding:5px;
+    margin-top: -36px;
+}
+.zop {
+    float: left;
+    width: 65px;
+}
+#productname input {
+    border:none;
+    margin-bottom: 16px;
+    font-size: 17px;
+}
+#productname button{
+    color: black;
+    font-size:15px;
+    background-color: #f4d942;
+    border:none;
+}
+#navbar {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #f4d942;
+
+}
+#navbar button:hover {
+    background-color: #f4b342;
+}
+#cartbutton{
+     float:left;
+    height: 50px;
+    width: 200px;
+    background-color: #f4d942 ;
+    color:black;
+    border: none;
+    margin:4px;
+ }
+#bezoekersid {
+    height: 50px;
+    width: 200px;
+    background-color: #f4d942 ;
+    color:black;
+    border: none;
+    float:left;
+    display: inline-block;
+    margin:4px;
+}
+/*style="height:50px;width:200px;background-color: #4CAF50;color: white;"(cart)
+style="height:50px;width:200px;background-color: #4CAF50;color: white;"(bezoeker)
+ */

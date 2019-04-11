@@ -8,8 +8,20 @@
 <script src="javascript/webfunctions.js"></script>
 
 <body onload="loadSelectedProductsPage()">
-	<button style='font-size:20px;' onclick="window.location.href = 'index.html';" >&larr;</button><br>
-	<table style="border: 2px solid lightgrey" id="selectedproduct">
+	<!--Title homepage-->
+	<a href="index.html"><img class= "logo" src="https://werkenbijopisop.nl/img/f67f11070bd2b55d1c8ca88c15aecb279e3413c2.png"></a>
+
+<!--menu-->
+	<div id="navbar">
+		<button id="cartbutton"  onclick="window.location.href = 'collaborative_filtering.html';">Winkelwagentje</button>
+		<p> Klik op logo om terug naar de homepagina te gaan</p>
+		<!--<button id= "bezoekersid"  onclick="window.location.href = 'personal.html';">Bezoekersid aanbeveling</button><br><br>-->
+	</div>
+	<h2>Product pagina</h2>
+	<!--selected product-->
+
+<h3>Gekozen product</h3>
+	<table id="selectedproduct">
 		<tr>
 			<th width="2%"></th>
             <th width="8%"></th>
@@ -17,9 +29,11 @@
             <th width="1%"></th>
 			<th width="2%"></th>
 		</tr>
-	</table><br>
+	</table>
 
-    <table id="products">
+	<br>
+<h3>Soortgelijke producten</h3>
+    <table style="border: 2px solid lightgrey" id="products">
         <tr>
 			<th width="2%"></th>
             <th width="8%"></th>

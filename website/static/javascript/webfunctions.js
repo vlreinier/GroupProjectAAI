@@ -65,8 +65,8 @@ function loadPersonalPopularProducts(fetchpath) {
 function showProductsInTable(products, tableid) {
     for (product of products) {
         let row = element("tr",
-			element("td", image(product['image'])),
-            element("td", link(product['_id'],product['name'])),
+			element("td", image(product['_id'], product['image'])),
+            element("td", text(product['name'])),
 			element("td", text(product['price'])),
 			element("td", text(product['availability'])),
 			element("td", addtostorage_button(product['_id'], product['name'])));
@@ -98,21 +98,18 @@ function text(value) {
 }
 
 // functie voor het aanmaken van een textelement voor tabel
-function image(src) {
+function image(id, src) {
     let img = new Image();
 	img.src = src;
 	img.style.height = '120px';
 	img.style.width = '120px';
+	img.onclick = function() {
+		addSessionStorage(id);
+		window.location = 'similar.html';
+	};
     return img;
 }
 
-function link(href, value) {
-    var link = document.createElement("a");
-    link.appendChild(text(value));
-    link.setAttribute("onclick", "addSessionStorage("+JSON.stringify(href)+");window.location = 'similar.html';");
-    link.setAttribute("style", 'color:blue;text-decoration:underline');
-    return link;
-}
 
 // functie voor het aanmaken van een buttonelement voor tabel add to localstorage
 function addtostorage_button(id, name) {
@@ -169,7 +166,10 @@ function saveVisitorId() {
 function showVisitorId() {
 	visitor_id = sessionStorage.getItem('visitor_id');
 	if (visitor_id !== null) {
-		document.getElementById("showvisitorid").innerHTML = sessionStorage.getItem('visitor_id'); }
+		document.getElementById("showvisitorid").innerHTML = sessionStorage.getItem('visitor_id');
+		document.getElementById("popprod").innerHTML ="Producten speciaal voor jou!"; }
+	if (visitor_id === "") {
+		document.getElementById("popprod").innerHTML ="Populaire producten";}
 	return sessionStorage.getItem('visitor_id');
 }
 

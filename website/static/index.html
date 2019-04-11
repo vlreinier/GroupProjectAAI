@@ -2,27 +2,35 @@
 
 <html>
 <meta charset="UTF-8">
-<title>Index</title>
+<title>Homepagina</title>
 <link rel="stylesheet" type="text/css" href="style.css">
 <body onload="loadPersonalPopularProducts('popularproducts');showVisitorId();updateCartStatus();">
+<script src="javascript/webfunctions.js"></script> <!--connection met Javascript-->
+<!--Title homepage-->
+<a href="index.html"><img class= "logo" src="https://werkenbijopisop.nl/img/f67f11070bd2b55d1c8ca88c15aecb279e3413c2.png"></a>
+<!--Login -->
 	<form id="visitorid">
 		<label style="float: left; width: 177px;">Opslaan bezoekerid: </label><input type="text" name="_id" />
-		<button style="background-color: #4CAF50;color: white;font-size:15px;" type="button" onclick="saveVisitorId();">Log in</button>
+		<button  type="button" onclick="saveVisitorId();">Log in</button>
 		<label style="margin-left:15px;font-style: italic" id="showvisitorid"></label>
 	</form>
-	<form id="productname">
+<!--menu-->
+	<div id="navbar">
+		<button id="cartbutton"  onclick="window.location.href = 'collaborative_filtering.html';">Winkelwagentje</button>
+		<button id= "bezoekersid"  onclick="window.location.href = 'personal.html';">Bezoekersid aanbeveling</button><br><br>
+		<!--search bar-->
+		<form id="productname">
 		<select id="nameorid">
 		  <option value="name">naam</option>
 		  <option value="id">ID</option>
 		</select>
-		<label style="float: left; width: 115px;">Zoek op product: </label><input type="text" name="name" />
-		<button style="background-color: #4CAF50;color: white;font-size:15px;" type="button" onclick="getProductsOnName();">Zoek</button>
+		<label class="zop">Zoek op product: </label><input type="text" name="name" />
+		<button type="button" onclick="getProductsOnName();">Zoek</button>
 		<label style="margin-left:15px;font-style: italic" id="showproductname"></label>
 	</form><br>
-	<button id="cartbutton" style="height:50px;width:200px;background-color: #4CAF50;color: white;" onclick="window.location.href = 'collaborative_filtering.html';">Winkelwagentje</button>
-	<button style="height:50px;width:200px;background-color: #4CAF50;color: white;" onclick="window.location.href = 'personal.html';">Bezoekersid aanbeveling</button><br><br>
-
-<script src="javascript/webfunctions.js"></script>
+	</div>
+<!--Products -->
+	<h2 id="popprod">Populaire producten</h2>
     <table id="products">
         <tr>
 			<th width="2%"></th>
