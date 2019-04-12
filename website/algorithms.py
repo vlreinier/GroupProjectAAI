@@ -46,15 +46,18 @@ def alternatives(sql_db, sessiondata):
 def content_tree(sql_db, sessiondata):
     product_ids = []
     for product_id in sessiondata:
+
         query_results = search_sql(sql_db,
                                    "SELECT category, sub_category, sub_sub_category, selling_price, gender, brand FROM products WHERE product_id = '{}'".format(
                                        product_id))[0]
+        #producteigenschappen van query in dictionaries zetten
         category = query_results[0]
         sub_category = query_results[1]
         sub_sub_category = query_results[2]
         selling_price = query_results[3]
         gender = query_results[4]
         brand = query_results[5]
+        #product_ids zoeken die dezelfde category, sub_category,sub_sub_category en prijs bevatten
         query_results1 = search_sql(sql_db,
                                     "SELECT product_id FROM products WHERE category = '{}' AND sub_category = '{}' AND sub_sub_category = '{}' AND selling_price BETWEEN {} AND {} AND gender = '{}' AND brand = '{}' ORDER BY RANDOM() LIMIT 8".format(
                                         category, sub_category, sub_sub_category, int(selling_price) * 0.87,
@@ -63,7 +66,7 @@ def content_tree(sql_db, sessiondata):
         for result in query_results1:
             if result[0] != product_id:
                 product_ids.append(result[0])
-        if (len(query_results1) < 5) or ((len(product_ids) < 15) and (len(sessiondata) == 1)):
+        if (len(query_results1) < 5) or ((len(product_ids) < 15) and (len(sessiondata) == 1)): # bevat minder dan 5 producten in de resultaat van de query
             query_results2 = search_sql(sql_db,
                                         "SELECT product_id FROM products WHERE category = '{}' AND sub_category = '{}' AND sub_sub_category = '{}' AND selling_price BETWEEN {} AND {} ORDER BY RANDOM() LIMIT 8".format(
                                             category, sub_category, sub_sub_category, int(selling_price) * 0.80,
@@ -166,15 +169,15 @@ def get_homepage_products(sql_connection, visitor_id, timespan):
         popular = random.sample(popular_all, 3)
     return personal + popular
 
-
+# search bar
 def similar_productnames(sql_connection, sessiondata):
     id_list = []
     if 'productname' in sessiondata:
-        similar_named_products = search_sql(sql_connection, "SELECT products.product_id FROM products WHERE products.name ILIKE '%{0}%'".format(sessiondata['productname']))
+        similar_named_products = search_sql(sql_connection, "SELECT products.product_id FROM products WHERE products.name ILIKE '%{0}%'".format(sessiondata['productname'])) # haal product_ids die de productname bevata
         for id in similar_named_products:
             id_list.append(id[0])
     if 'productid' in sessiondata:
-        product_name = search_sql(sql_connection, "SELECT products.name FROM products WHERE product_id ='{}'".format(sessiondata['productid']))
+        product_name = search_sql(sql_connection, "SELECT products.name FROM products WHERE product_id ='{}'".format(sessiondata['productid']))#haal uit producten die productname bevat als die van de ingevoerde productid
         product_name = product_name[0][0].split(' ')[0]
         similar_id_products = search_sql(sql_connection, "SELECT product_id FROM products WHERE products.name ILIKE '%{0}%'".format(product_name))
         id_list.append(sessiondata['productid'])
@@ -206,6 +209,7 @@ def season_products(sql_connection,sessiondata):
         "LIMIT 8"
     s_product=search_sql(sql_connection,qry)
 
+#tijdsinterval berkenen
 def calculate_timespan(sql_connection,grens_in_percentage):
 
     qry_aantal_orders="""SELECT count(orders.product_id) FROM orders INNER JOIN sessions on sessions.session_id=orders.session_id 
