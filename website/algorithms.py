@@ -4,7 +4,7 @@ from collections import Counter
 import random
 
 
-# haalt alternatieve producten op voor winkelwagentje a.d.h.v. lift en / of producteigenschappen
+# haalt alternatieve producten op voor winkelwagentje a.d.h.v. lift berekening en / of producteigenschappen
 def alternatives(sql_db, sessiondata):
     id_list = []
     if len(sessiondata) == 1:
@@ -42,7 +42,7 @@ def alternatives(sql_db, sessiondata):
     return id_list
 
 
-# functie voor het ophalen van soortgelijke producten
+# functie voor het ophalen van soortgelijke producten, waarbij ervoor wordt gezorgd dat er altijd genoeg resultaten zijn
 def content_tree(sql_db, sessiondata):
     product_ids = []
     for product_id in sessiondata:
@@ -84,7 +84,7 @@ def content_tree(sql_db, sessiondata):
     return product_ids
 
 
-# berekenen meest voorkomende producteigenschappen
+# Algoritme voor het berekenen van meest voorkomende producteigenschappen en favoriete producten
 def get_highest_occurence(ordered):
     new_list, product_ids, favourites, most_wanted = [], [], [], []
     sub_sub_category, brand = [], []
@@ -115,7 +115,7 @@ def get_highest_occurence(ordered):
     return list(set(new_list)), favourites
 
 
-# berekenen persoonlijke aanbeveling
+# Algoritme voor de persoonlijke aanbeveling
 def personal_preffered_products(sql_connection, visitor_id):
     if (visitor_id['visitor_id'] == '') or (visitor_id['visitor_id'] is None):
         return []

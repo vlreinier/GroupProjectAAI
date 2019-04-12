@@ -40,6 +40,7 @@ def calculate_support(sql_db, total_transactions, query):
 
 
 # functie voor het berekenen van lift voor product x met y, uit orders
+# elk product moet 1 op de 10000 keer voorkomen anders is de aanbeveling niet per se een goede aanbeveling
 def lift_orders(sql_db):
     starttime = time.time()
     total_orders = total_transactions(sql_db, "SELECT count(distinct(session_id)) FROM orders")
@@ -64,7 +65,7 @@ def lift_orders(sql_db):
     print('lift orders runtime:', (time.time() - starttime) / 60)
 
 
-# functie voor het beheren van gekozen lift berekeningen
+# functie voor het beheren van gekozen lift berekeningen, viewed before is verwijderd
 def lift(sql_db):
     print("Lift insertion is started at ", datetime.datetime.now())
     lift_table(sql_db)
