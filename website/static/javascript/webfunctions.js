@@ -116,8 +116,8 @@ function text(value) {
 function image(src) {
     let img = new Image();
 	img.src = src;
-	img.style.height = '120px';
-	img.style.width = '120px';
+	img.style.height = '150px';
+	img.style.width = '150px';
     return img;
 }
 

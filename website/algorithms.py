@@ -124,7 +124,7 @@ def personal_preffered_products(sql_connection, visitor_id):
                                             INNER JOIN products on orders.product_id = products.product_id
                                             WHERE visitors.visitor_id = '{}'""".format(visitor_id['visitor_id']))
     id_list, favourites = get_highest_occurence(ordered)
-    if len(id_list) == 0:
+    if len(id_list) < 3:
         viewed = search_sql(sql_connection, """SELECT distinct(viewed_before.product_id),
                                             products.sub_sub_category, products.brand FROM visitors   
                                             INNER JOIN viewed_before on visitors.visitor_id = viewed_before.visitor_id
@@ -142,7 +142,7 @@ def get_homepage_products(sql_connection, visitor_id, timespan):
     popular_orders_last_3months = search_sql(sql_connection, """SELECT orders.product_id FROM sessions
                                                                 INNER JOIN orders ON sessions.session_id = orders.session_id
                                                                 WHERE sessions.session_start > CURRENT_DATE - INTERVAL '{} months'
-                                                                GROUP BY orders.product_id ORDER BY COUNT(*) DESC LIMIT 40""".format(timespan))
+                                                                GROUP BY orders.product_id ORDER BY COUNT(*) DESC LIMIT 100""".format(timespan))
     for tuple in popular_orders_last_3months:
         popular_all.append(tuple[0])
 
@@ -174,10 +174,9 @@ def similar_productnames(sql_connection, sessiondata):
         for id in similar_named_products:
             id_list.append(id[0])
     if 'productid' in sessiondata:
-        sub_sub_category = search_sql(sql_connection, "SELECT sub_sub_category FROM products WHERE product_id ='{}'".format(sessiondata['productid']))
-        if len(sub_sub_category) == 0:
-            return []
-        similar_id_products = search_sql(sql_connection, "SELECT product_id FROM products WHERE sub_sub_category = '{}' LIMIT 20;".format(sub_sub_category[0][0]))
+        product_name = search_sql(sql_connection, "SELECT products.name FROM products WHERE product_id ='{}'".format(sessiondata['productid']))
+        product_name = product_name[0][0].split(' ')[0]
+        similar_id_products = search_sql(sql_connection, "SELECT product_id FROM products WHERE products.name ILIKE '%{0}%'".format(product_name))
         id_list.append(sessiondata['productid'])
         for id in similar_id_products:
             id_list.append(id[0])
