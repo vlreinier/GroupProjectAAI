@@ -61,6 +61,21 @@ function loadPersonalPopularProducts(fetchpath) {
         .then(products_json => showProductsInTable(products_json, 'products'));
 }
 
+// functie voor het opvragen van persoonlijke producten a.d.h.v. bezoekersid
+function loadPersonalProducts() {
+	let visitor_id = sessionStorage.getItem('visitor_id');
+	if (visitor_id !== null) {
+		document.getElementById("showvisitorid").innerHTML = visitor_id; }
+    let sessionData = { visitor_id : sessionStorage.getItem('visitor_id')};
+	emptyTable('products');
+    fetch('/personalproducts', {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(sessionData) })
+        .then(response => response.json())
+        .then(products_json => showProductsInTable(products_json, 'products'));
+}
+
 // functie voor laden van productdetails in tabel
 function showProductsInTable(products, tableid) {
     for (product of products) {
