@@ -1,4 +1,5 @@
 // functie voor het opvragen van winkelwagen localstorage producten
+// ook het laden van de anderen kochten ook producten op de winkelwagen pagina
 function loadProductsShoppingcart() {
 	let values = allStorage();
 	emptyTable('savedproducts');
@@ -17,7 +18,7 @@ function loadProductsShoppingcart() {
         .then(products_json => showProductsInTable(products_json,'products'));
 }
 
-// functie voor het opvragen van specifieke producten
+// functie voor het laden gekozen product op productpagina en het tonen van soortgelijke producten
 function loadSelectedProductsPage() {
 	let data = {product_for_similar : sessionStorage.getItem('product_for_similar')};
 	emptyTable('selectedproduct');
@@ -35,6 +36,7 @@ function loadSelectedProductsPage() {
         .then(products_json => showProductsInTable(products_json, 'products'));
 }
 
+// Functie voor het laden van resultaten van gezochte naam of ID
 function getProductsOnName() {
 	let name = document.forms['productname'].name.value;
 	emptyTable('products');
@@ -49,7 +51,8 @@ function getProductsOnName() {
         .then(products_json => showProductsInTable(products_json, 'products'));
 }
 
-// functie voor het opvragen van persoonlijke producten a.d.h.v. bezoekersid
+
+// functie voor het het laden van de homepage producten, populair en mogelijk persoonlijk
 function loadPersonalPopularProducts(fetchpath) {
     let sessionData = { visitor_id : showVisitorId()};
 	emptyTable('products');
@@ -61,7 +64,7 @@ function loadPersonalPopularProducts(fetchpath) {
         .then(products_json => showProductsInTable(products_json, 'products'));
 }
 
-// functie voor het opvragen van persoonlijke producten a.d.h.v. bezoekersid
+// functie voor het opvragen van persoonlijke producten a.d.h.v. bezoekersid voor de persoonlijke aanbeveling pagina
 function loadPersonalProducts() {
 	let visitor_id = sessionStorage.getItem('visitor_id');
 	if (visitor_id !== null) {
@@ -89,7 +92,7 @@ function showProductsInTable(products, tableid) {
         document.querySelector("#"+tableid).appendChild(row); }
 }
 
-// functie voor laden van productdetails in tabel
+// functie voor laden van productdetails in tabel winkelwagentje
 function showCartInTable(products) {
     for (product of products) {
         let row = element("tr",
@@ -112,7 +115,7 @@ function text(value) {
     return document.createTextNode(value);
 }
 
-// functie voor het aanmaken van een textelement voor tabel
+// functie voor het aanmaken van een image element voor tabel
 function image(src) {
     let img = new Image();
 	img.src = src;
@@ -162,12 +165,13 @@ function removefromlocalstorage(id) {
 	localStorage.removeItem(id);
 }
 
+// functie voor het toevoegen product id aan sessionstorage
 function addSessionStorage(id){
 	sessionStorage.removeItem('product_for_similar');
 	sessionStorage.setItem('product_for_similar', id);
 }
 
-// functie voor het toevoegen aan LocalStorage
+// functie voor het opslaan van visitor_id van website
 function saveVisitorId() {
 	let id = document.forms['visitorid']._id.value;
 	sessionStorage.clear();
@@ -175,6 +179,7 @@ function saveVisitorId() {
 	showVisitorId();
 }
 
+// functie voor het tonen van visitor_id op website
 function showVisitorId() {
 	visitor_id = sessionStorage.getItem('visitor_id');
 	if (visitor_id !== null) {
@@ -185,6 +190,7 @@ function showVisitorId() {
 	return sessionStorage.getItem('visitor_id');
 }
 
+// functie voor het tonen van ingevoerde product naam op pagina
 function showProductName(name) {
 	document.getElementById("popprod").innerHTML = 'Zoekresultaten voor '+ name;
 }
